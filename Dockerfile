@@ -1,6 +1,6 @@
-FROM openjdk:17 
-ARG JAR_FILE=target/database-filler.jar  
+FROM openjdk:11
+ARG JAR_FILE=target/neoflex-training.jar
 WORKDIR /opt/app  
 COPY ${JAR_FILE} app.jar  
 ENTRYPOINT ["java","-jar","app.jar"]
-EXPOSE 8081/tcp
+EXPOSE 8080/tcp
