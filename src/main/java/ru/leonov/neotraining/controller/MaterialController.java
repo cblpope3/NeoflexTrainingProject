@@ -1,46 +1,48 @@
 package ru.leonov.neotraining.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import ru.leonov.neotraining.entities.MaterialEntity;
+import ru.leonov.neotraining.services.MaterialService;
 
 @Controller
 @RequestMapping(value = "/material")
 public class MaterialController {
 
+    @Autowired
+    private MaterialService materialService;
+
     @GetMapping("/add")
     @ResponseBody
-    public String addMaterial(){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public String add(@RequestParam String name){
+        materialService.add(name);
+        return String.format("Material %s added successfully!", name);
     }
 
-    @GetMapping("/get")
+    @GetMapping("")
     @ResponseBody
-    public String getAllMaterials(){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public Iterable<MaterialEntity> getAll(){
+        return materialService.getAll();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
-    public String getMaterialById(){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public MaterialEntity getById(@PathVariable int id){
+        return materialService.getById(id);
     }
 
-    @GetMapping("/delete")
+    @GetMapping("/{id}/update")
     @ResponseBody
-    public String deleteMaterialById(){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public String updateById(@PathVariable int id, @RequestParam String name){
+        if (materialService.updateById(id, name)) return "updated successfully!";
+        else return String.format("material #%s not found", id);
     }
 
-    @GetMapping("/update")
+    @GetMapping("/{id}/delete")
     @ResponseBody
-    public String updateMaterialById(){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public String deleteById(@PathVariable int id){
+        if (materialService.deleteById(id)) return "deleted successfully!";
+        else return String.format("material #%s not found.", id);
     }
 }

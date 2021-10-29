@@ -1,5 +1,43 @@
 package ru.leonov.neotraining.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ru.leonov.neotraining.entities.MaterialEntity;
+import ru.leonov.neotraining.repositories.MaterialRepository;
+
+@Service
 public class MaterialService {
-    //TODO implement methods: add, getAll, getById, deleteById, updateById
+
+    @Autowired
+    private MaterialRepository materialRepository;
+
+    public void add(String name){
+        MaterialEntity material = new MaterialEntity(name);
+        materialRepository.save(material);
+    }
+
+    public Iterable<MaterialEntity> getAll(){
+        return materialRepository.findAll();
+    }
+
+    public MaterialEntity getById(int id){
+        if (materialRepository.existsById(id)) return materialRepository.findById(id).get();
+        else return null;
+    }
+
+    public boolean updateById(int id, String name){
+        if (materialRepository.existsById(id)){
+            MaterialEntity material = materialRepository.findById(id).get();
+            material.setName(name);
+            materialRepository.save(material);
+            return true;
+        } else return false;
+    }
+
+    public boolean deleteById(int id){
+        if (materialRepository.existsById(id)){
+            materialRepository.deleteById(id);
+            return true;
+        } else return false;
+    }
 }
