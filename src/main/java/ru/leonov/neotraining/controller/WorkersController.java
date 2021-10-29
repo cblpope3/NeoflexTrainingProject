@@ -20,31 +20,29 @@ public class WorkersController {
         return String.format("Worker %s %s added successfully!", name, lastName);
     }
 
-    @GetMapping("/get")
+    @GetMapping("")
     @ResponseBody
     public Iterable<WorkerEntity> getAllWorkers(){
         return workersService.getAllWorkers();
     }
-    @GetMapping("/get/{id}")
+
+    @GetMapping("/{id}")
     @ResponseBody
     public WorkerEntity getWorkerById(@PathVariable int id){
-        WorkerEntity worker = new WorkerEntity();
-        //TODO complete method after implementation corresponding service
-        return worker;
+        return workersService.getById(id);
     }
 
-    @GetMapping("/delete")
+    @GetMapping("/{id}/update")
     @ResponseBody
-    public String deleteWorkerById(@RequestParam int id){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public String updateWorkerById(@PathVariable int id, @RequestParam String name, @RequestParam String lastName){
+        if (workersService.updateById(id, name, lastName)) return "updated successfully!";
+        else return String.format("worker #%s not found", id);
     }
 
-    @GetMapping("/update")
+    @GetMapping("/{id}/delete")
     @ResponseBody
-    public String updateWorkerById(@RequestParam int id, @RequestParam String name, @RequestParam String lastName){
-        //TODO complete method after implementation corresponding service
-        return "Not implemented!";
+    public String deleteWorkerById(@PathVariable int id){
+        if (workersService.deleteById(id)) return "deleted successfully!";
+        else return String.format("Worker #%s not found.", id);
     }
-
 }

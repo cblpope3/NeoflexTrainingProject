@@ -13,7 +13,6 @@ public class WorkersService {
 
     public void addWorker(String name, String lastName){
         WorkerEntity worker = new WorkerEntity(name, lastName);
-
         workerRepository.save(worker);
     }
 
@@ -21,5 +20,25 @@ public class WorkersService {
         return workerRepository.findAll();
     }
 
-    //TODO implement methods: getById, deleteById, updateById
+    public WorkerEntity getById(int id){
+        if (workerRepository.existsById(id)) return workerRepository.findById(id).get();
+        else return null;
+    }
+
+    public boolean updateById(int id, String name, String lastName){
+        if (workerRepository.existsById(id)){
+            WorkerEntity worker = workerRepository.findById(id).get();
+            worker.setName(name);
+            worker.setLastName(lastName);
+            workerRepository.save(worker);
+            return true;
+        } else return false;
+    }
+
+    public boolean deleteById(int id){
+        if (workerRepository.existsById(id)){
+            workerRepository.deleteById(id);
+            return true;
+        } else return false;
+    }
 }
