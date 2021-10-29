@@ -10,10 +10,12 @@ public class TechMapEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "worker_id")
     private WorkerEntity worker;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "material_id")
     private MaterialEntity material;
 
     public TechMapEntity() {
