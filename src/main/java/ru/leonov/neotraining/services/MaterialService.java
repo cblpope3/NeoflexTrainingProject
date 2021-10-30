@@ -21,13 +21,13 @@ public class MaterialService {
     }
 
     public MaterialEntity getById(int id){
-        if (materialRepository.existsById(id)) return materialRepository.findById(id).get();
+        if (materialRepository.existsById(id)) return materialRepository.findById(id);
         else return null;
     }
 
     public boolean updateById(int id, String name){
         if (materialRepository.existsById(id)){
-            MaterialEntity material = materialRepository.findById(id).get();
+            MaterialEntity material = materialRepository.findById(id);
             material.setName(name);
             materialRepository.save(material);
             return true;

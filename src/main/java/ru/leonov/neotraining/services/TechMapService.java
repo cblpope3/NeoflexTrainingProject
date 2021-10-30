@@ -20,9 +20,8 @@ public class TechMapService {
     private MaterialRepository materialRepository;
 
     public TechMapEntity add(int workerId, int materialId){
-        //FIXME get rid of .get() methods
-        TechMapEntity techMap = new TechMapEntity(workerRepository.findById(workerId).get(),
-                materialRepository.findById(materialId).get());
+        TechMapEntity techMap = new TechMapEntity(workerRepository.findById(workerId),
+                materialRepository.findById(materialId));
         return techMapRepository.save(techMap);
     }
 
@@ -36,11 +35,10 @@ public class TechMapService {
     }
 
     public boolean updateById(int id, int workerId, int materialId){
-        //FIXME get rid of .get() methods
         if (techMapRepository.existsById(id)){
             TechMapEntity techMap = techMapRepository.findById(id);
-            techMap.setWorker(workerRepository.findById(workerId).get());
-            techMap.setMaterial(materialRepository.findById(materialId).get());
+            techMap.setWorker(workerRepository.findById(workerId));
+            techMap.setMaterial(materialRepository.findById(materialId));
             techMapRepository.save(techMap);
             return true;
         } else return false;

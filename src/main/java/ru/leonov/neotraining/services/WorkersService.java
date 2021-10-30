@@ -21,13 +21,13 @@ public class WorkersService {
     }
 
     public WorkerEntity getById(int id){
-        if (workerRepository.existsById(id)) return workerRepository.findById(id).get();
+        if (workerRepository.existsById(id)) return workerRepository.findById(id);
         else return null;
     }
 
     public boolean updateById(int id, String name, String lastName){
         if (workerRepository.existsById(id)){
-            WorkerEntity worker = workerRepository.findById(id).get();
+            WorkerEntity worker = workerRepository.findById(id);
             worker.setName(name);
             worker.setLastName(lastName);
             workerRepository.save(worker);
