@@ -1,6 +1,7 @@
 package ru.leonov.neotraining.entities;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "executed_operations")
@@ -10,7 +11,8 @@ public class ExecutedOperationsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "techMap_id")
     private TechMapEntity techMap;
 
     private String date;
@@ -18,9 +20,10 @@ public class ExecutedOperationsEntity {
     public ExecutedOperationsEntity() {
     }
 
-    public ExecutedOperationsEntity(TechMapEntity techMap, String date) {
+    public ExecutedOperationsEntity(TechMapEntity techMap) {
         this.techMap = techMap;
-        this.date = date;
+        Date date = new Date();
+        this.date = date.toString();
     }
 
     public int getId() {
