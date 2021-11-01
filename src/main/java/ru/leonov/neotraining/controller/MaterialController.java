@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.leonov.neotraining.entities.MaterialEntity;
-import ru.leonov.neotraining.entities.WorkerEntity;
 import ru.leonov.neotraining.services.MaterialService;
 
 @Controller
@@ -17,9 +16,9 @@ public class MaterialController {
     private MaterialService materialService;
 
     @ApiOperation(value = "Add a new material.")
-    @GetMapping("/add")
+    @PostMapping("")
     @ResponseBody
-    public String add(@ApiParam(value = "Name of material.", required = true) @RequestParam String name){
+    public String add(@ApiParam(value = "Name of material.", required = true) @RequestParam String name) {
         materialService.add(name);
         return String.format("Material %s added successfully!", name);
     }
@@ -31,7 +30,7 @@ public class MaterialController {
             response = MaterialEntity[].class)})
     @GetMapping("")
     @ResponseBody
-    public Iterable<MaterialEntity> getAll(){
+    public Iterable<MaterialEntity> getAll() {
         return materialService.getAll();
     }
 
@@ -42,23 +41,23 @@ public class MaterialController {
             response = MaterialEntity.class)})
     @GetMapping("/{id}")
     @ResponseBody
-    public MaterialEntity getById(@ApiParam(value = "Id of requested material.", required = true) @PathVariable int id){
+    public MaterialEntity getById(@ApiParam(value = "Id of requested material.", required = true) @PathVariable int id) {
         return materialService.getById(id);
     }
 
     @ApiOperation(value = "Change name of material with id={id}.")
-    @GetMapping("/{id}/update")
+    @PutMapping("/{id}")
     @ResponseBody
     public String updateById(@ApiParam(value = "Id of requested material.", required = true) @PathVariable int id,
-                             @ApiParam(value = "New name of material.", required = true) @RequestParam String name){
+                             @ApiParam(value = "New name of material.", required = true) @RequestParam String name) {
         if (materialService.updateById(id, name)) return "updated successfully!";
         else return String.format("material #%s not found", id);
     }
 
     @ApiOperation(value = "Delete material with id={id}.")
-    @GetMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public String deleteById(@ApiParam(value = "Id of requested material.", required = true) @PathVariable int id){
+    public String deleteById(@ApiParam(value = "Id of requested material.", required = true) @PathVariable int id) {
         if (materialService.deleteById(id)) return "deleted successfully!";
         else return String.format("material #%s not found.", id);
     }

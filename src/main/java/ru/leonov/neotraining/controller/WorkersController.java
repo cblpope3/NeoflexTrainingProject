@@ -16,10 +16,10 @@ public class WorkersController {
     private WorkersService workersService;
 
     @ApiOperation(value = "Add a new worker.")
-    @GetMapping("/add")
+    @PostMapping("")
     @ResponseBody
     public String addWorker(@ApiParam(value = "Name of worker.", required = true) @RequestParam String name,
-                            @ApiParam(value = "Last name of worker.", required = true) @RequestParam String lastName){
+                            @ApiParam(value = "Last name of worker.", required = true) @RequestParam String lastName) {
         workersService.addWorker(name, lastName);
         return String.format("Worker %s %s added successfully!", name, lastName);
     }
@@ -31,7 +31,7 @@ public class WorkersController {
             response = WorkerEntity[].class)})
     @GetMapping("")
     @ResponseBody
-    public Iterable<WorkerEntity> getAllWorkers(){
+    public Iterable<WorkerEntity> getAllWorkers() {
         return workersService.getAllWorkers();
     }
 
@@ -43,27 +43,27 @@ public class WorkersController {
     @GetMapping("/{id}")
     @ResponseBody
     public WorkerEntity getWorkerById(@ApiParam(value = "Id of requested worker.", required = true)
-                                          @PathVariable int id){
+                                      @PathVariable int id) {
         return workersService.getById(id);
     }
 
     @ApiOperation(value = "Change name and last name of worker with id={id}.")
-    @GetMapping("/{id}/update")
+    @PutMapping("/{id}")
     @ResponseBody
     public String updateWorkerById(@ApiParam(value = "Id of requested worker.", required = true)
-                                       @PathVariable int id,
+                                   @PathVariable int id,
                                    @ApiParam(value = "New name of worker.", required = true)
-                                        @RequestParam String name,
+                                   @RequestParam String name,
                                    @ApiParam(value = "New last name of worker.", required = true)
-                                       @RequestParam String lastName){
+                                   @RequestParam String lastName) {
         if (workersService.updateById(id, name, lastName)) return "updated successfully!";
         else return String.format("worker #%s not found", id);
     }
 
     @ApiOperation(value = "Delete worker with id={id}.")
-    @GetMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public String deleteWorkerById(@ApiParam(value = "Id of requested worker.", required = true) @PathVariable int id){
+    public String deleteWorkerById(@ApiParam(value = "Id of requested worker.", required = true) @PathVariable int id) {
         if (workersService.deleteById(id)) return "deleted successfully!";
         else return String.format("Worker #%s not found.", id);
     }

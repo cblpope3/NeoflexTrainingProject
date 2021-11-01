@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.leonov.neotraining.entities.TechMapEntity;
-import ru.leonov.neotraining.entities.WorkerEntity;
 import ru.leonov.neotraining.services.TechMapService;
 
 @Controller
@@ -17,12 +16,12 @@ public class TechMapController {
     private TechMapService techMapService;
 
     @ApiOperation(value = "Add a new technical map.")
-    @GetMapping("/add")
+    @PostMapping("")
     @ResponseBody
     public String add(@ApiParam(value = "Id of worker associated with technical map.", required = true)
-                          @RequestParam int workerId,
+                      @RequestParam int workerId,
                       @ApiParam(value = "Id of material associated with technical map.", required = true)
-                      @RequestParam int materialId){
+                      @RequestParam int materialId) {
         TechMapEntity addedTechMap = techMapService.add(workerId, materialId);
         return String.format("Technical map '%s' added successfully!", addedTechMap.toString());
     }
@@ -34,7 +33,7 @@ public class TechMapController {
             response = TechMapEntity[].class)})
     @GetMapping("")
     @ResponseBody
-    public Iterable<TechMapEntity> getAll(){
+    public Iterable<TechMapEntity> getAll() {
         return techMapService.getAll();
     }
 
@@ -46,27 +45,27 @@ public class TechMapController {
     @GetMapping("/{id}")
     @ResponseBody
     public TechMapEntity getById(@ApiParam(value = "Id of requested technical map.", required = true)
-                                     @PathVariable int id){
+                                 @PathVariable int id) {
         return techMapService.getById(id);
     }
 
     @ApiOperation(value = "Change existing technical map with id={id}.")
-    @GetMapping("/{id}/update")
+    @PutMapping("/{id}")
     @ResponseBody
     public String updateById(@ApiParam(value = "Id of requested technical map.", required = true)
-                                 @PathVariable int id,
+                             @PathVariable int id,
                              @ApiParam(value = "New id of worker associated with technical map.", required = true)
-                                 @RequestParam int workerId,
+                             @RequestParam int workerId,
                              @ApiParam(value = "New id of material associated with technical map.", required = true)
-                                 @RequestParam int materialId){
+                             @RequestParam int materialId) {
         if (techMapService.updateById(id, workerId, materialId)) return "updated successfully!";
         else return String.format("technical map '#%s' not found", id);
     }
 
     @ApiOperation(value = "Delete technical map with id={id}.")
-    @GetMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public String deleteById(@ApiParam(value = "Id of requested technical map.", required = true)  @PathVariable int id){
+    public String deleteById(@ApiParam(value = "Id of requested technical map.", required = true) @PathVariable int id) {
         if (techMapService.deleteById(id)) return "deleted successfully!";
         else return String.format("technical map '#%s' not found.", id);
     }
