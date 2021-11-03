@@ -10,6 +10,13 @@ import ru.leonov.neotraining.repositories.WorkerRepository;
 @Service
 public class TechMapService {
 
+    //Variables used by methods 'add' and 'updateById'
+    public static final int STATUS_OK = 0;
+    public static final int NO_TECH_MAP = 1;
+    public static final int NO_WORKER = 2;
+    public static final int NO_MATERIAL = 3;
+    public static final int NOT_SAVED = 4;
+
     @Autowired
     private TechMapRepository techMapRepository;
 
@@ -19,33 +26,74 @@ public class TechMapService {
     @Autowired
     private MaterialRepository materialRepository;
 
-    public TechMapEntity add(int workerId, int materialId){
+    /**
+     * Method returns int with status code:
+     * '0' if techMap created successfully,
+     * '2' if worker not found in database,
+     * '3' if material not found in database,
+     * '4' if techMap not saved properly.
+     */
+    public int add(int workerId, int materialId) {
+        //check if worker and material are present in database
+        if (!workerRepository.existsById(workerId)) return NO_WORKER;
+        if (!materialRepository.existsById(materialId)) return NO_MATERIAL;
+
         TechMapEntity techMap = new TechMapEntity(workerRepository.findById(workerId),
                 materialRepository.findById(materialId));
-        return techMapRepository.save(techMap);
+        if (techMapRepository.save(techMap) == techMap) return STATUS_OK;
+        else return NOT_SAVED;
     }
 
-    public Iterable<TechMapEntity> getAll(){
+    public Iterable<TechMapEntity> getAll() {
         return techMapRepository.findAll();
     }
 
-    public TechMapEntity getById(int id){
+    public TechMapEntity getById(int id) {
         if (techMapRepository.existsById(id)) return techMapRepository.findById(id);
         else return null;
     }
 
-    public boolean updateById(int id, int workerId, int materialId){
-        if (techMapRepository.existsById(id)){
+    /**
+     * Method returns int with status code:
+     * '0' if techMap updated successfully,
+     * '1' if techMap not found in database,
+     * '2' if new worker not found in database,
+     * '3' if new material not found in database,
+     * '4' if techMap not saved properly.
+     */
+    public int updateById(int id, String workerId, String materialId) {
+
+        if (techMapRepository.existsById(id)) {
+            // techMap with given id have been found in database
             TechMapEntity techMap = techMapRepository.findById(id);
-            techMap.setWorker(workerRepository.findById(workerId));
-            techMap.setMaterial(materialRepository.findById(materialId));
-            techMapRepository.save(techMap);
-            return true;
-        } else return false;
+            if (workerId != null) {
+                if (!workerRepository.existsById(Integer.parseInt(workerId))) {
+                    // worker not found in database
+                    return NO_WORKER;
+                } else {
+                    // new worker id applied
+                    techMap.setWorker(workerRepository.findById(Integer.parseInt(workerId)));
+                }
+            }
+            if (materialId != null) {
+                if (!materialRepository.existsById(Integer.parseInt(materialId))) {
+                    // material not found in database
+                    return NO_MATERIAL;
+                } else {
+                    // new worker id applied
+                    techMap.setMaterial(materialRepository.findById(Integer.parseInt(materialId)));
+                }
+            }
+            if (techMapRepository.save(techMap) == techMap) return STATUS_OK;
+            else return NOT_SAVED;
+        } else {
+            // techMap with given id haven't been found in database
+            return NO_TECH_MAP;
+        }
     }
 
-    public boolean deleteById(int id){
-        if (techMapRepository.existsById(id)){
+    public boolean deleteById(int id) {
+        if (techMapRepository.existsById(id)) {
             techMapRepository.deleteById(id);
             return true;
         } else return false;
