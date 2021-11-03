@@ -11,31 +11,31 @@ public class MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
 
-    public void add(String name){
+    public boolean add(String name) {
         MaterialEntity material = new MaterialEntity(name);
-        materialRepository.save(material);
+        return (materialRepository.save(material)) == material;
     }
 
-    public Iterable<MaterialEntity> getAll(){
+    public Iterable<MaterialEntity> getAll() {
         return materialRepository.findAll();
     }
 
-    public MaterialEntity getById(int id){
+    public MaterialEntity getById(int id) {
         if (materialRepository.existsById(id)) return materialRepository.findById(id);
         else return null;
     }
 
-    public boolean updateById(int id, String name){
-        if (materialRepository.existsById(id)){
+    public boolean updateById(int id, String name) {
+        if (materialRepository.existsById(id)) {
             MaterialEntity material = materialRepository.findById(id);
-            material.setName(name);
+            if (name != null) material.setName(name);
             materialRepository.save(material);
             return true;
         } else return false;
     }
 
-    public boolean deleteById(int id){
-        if (materialRepository.existsById(id)){
+    public boolean deleteById(int id) {
+        if (materialRepository.existsById(id)) {
             materialRepository.deleteById(id);
             return true;
         } else return false;
