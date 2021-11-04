@@ -12,6 +12,15 @@ import ru.leonov.neotraining.repositories.WorkerRepository;
 @Service
 public class ExecutedOperationsService {
 
+    //Variables used by method 'executeOperation'
+    public static final int STATUS_OK = 0;
+    public static final int NO_TECH_MAP = 1;
+    public static final int NO_WORKER = 2;
+    public static final int NO_MATERIAL = 3;
+    public static final int WORKER_NOT_MATCH = 4;
+    public static final int MATERIAL_NOT_MATCH = 5;
+    public static final int NOT_SAVED = 6;
+
     @Autowired
     private ExecutedOperationsRepository executedOperationsRepository;
 
@@ -24,42 +33,45 @@ public class ExecutedOperationsService {
     @Autowired
     private TechMapRepository techMapRepository;
 
-    public boolean executeOperation(int workerId, int materialId, int techMapId){
-        boolean isWorkerExist = workerRepository.existsById(workerId);
-        boolean isMaterialExist = materialRepository.existsById(materialId);
-        boolean isTechMapExist = techMapRepository.existsById(techMapId);
+    /**
+     * Method returns int with status code:
+     * '0' if operation executed successfully,
+     * '1' if techMap not found in database,
+     * '2' if worker not found in database,
+     * '3' if material not found in database,
+     * '4' if worker not match techMap,
+     * '5' if material not match techMap,
+     * '6' if techMap not saved properly.
+     */
+    public int executeOperation(int workerId, int materialId, int techMapId) {
 
         //check if worker, material and technical map exist in database
-        if (isWorkerExist & isMaterialExist & isTechMapExist){
+        if (!techMapRepository.existsById(techMapId)) return NO_TECH_MAP;
+        if (!workerRepository.existsById(workerId)) return NO_WORKER;
+        if (!materialRepository.existsById(materialId)) return NO_MATERIAL;
 
-            TechMapEntity executingTechMap = techMapRepository.findById(techMapId);
+        TechMapEntity executingTechMap = techMapRepository.findById(techMapId);
 
-            boolean isWorkerMatchTechMap = executingTechMap.getWorker().getId() == workerId;
-            boolean isMaterialMatchTechMap = executingTechMap.getMaterial().getId() == materialId;
+        //check if worker and material are in current technical map
+        if (executingTechMap.getWorker().getId() != workerId) return WORKER_NOT_MATCH;
+        if (executingTechMap.getMaterial().getId() != materialId) return MATERIAL_NOT_MATCH;
 
-            //check if worker and material are in current technical map
-            if (isWorkerMatchTechMap & isMaterialMatchTechMap){
-
-                ExecutedOperationsEntity operation = new ExecutedOperationsEntity(executingTechMap);
-                executedOperationsRepository.save(operation);
-                return true;
-            }
-        }
-        //if didn't return before this line, check failed
-        return false;
+        ExecutedOperationsEntity operation = new ExecutedOperationsEntity(executingTechMap);
+        if (executedOperationsRepository.save(operation) == operation) return STATUS_OK;
+        else return NOT_SAVED;
     }
 
-    public Iterable<ExecutedOperationsEntity> getAll(){
+    public Iterable<ExecutedOperationsEntity> getAll() {
         return executedOperationsRepository.findAll();
     }
 
-    public ExecutedOperationsEntity getById(int id){
+    public ExecutedOperationsEntity getById(int id) {
         if (executedOperationsRepository.existsById(id)) return executedOperationsRepository.findById(id);
         else return null;
     }
 
-    public boolean deleteById(int id){
-        if (executedOperationsRepository.existsById(id)){
+    public boolean deleteById(int id) {
+        if (executedOperationsRepository.existsById(id)) {
             executedOperationsRepository.deleteById(id);
             return true;
         } else return false;
