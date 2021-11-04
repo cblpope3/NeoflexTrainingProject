@@ -1,5 +1,6 @@
 package ru.leonov.neotraining.services;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.leonov.neotraining.entities.ExecutedOperationsEntity;
@@ -20,6 +21,8 @@ public class ExecutedOperationsService {
     public static final int WORKER_NOT_MATCH = 4;
     public static final int MATERIAL_NOT_MATCH = 5;
     public static final int NOT_SAVED = 6;
+
+    private static final Logger log = Logger.getLogger(ExecutedOperationsService.class);
 
     @Autowired
     private ExecutedOperationsRepository executedOperationsRepository;
@@ -46,19 +49,39 @@ public class ExecutedOperationsService {
     public int executeOperation(int workerId, int materialId, int techMapId) {
 
         //check if worker, material and technical map exist in database
-        if (!techMapRepository.existsById(techMapId)) return NO_TECH_MAP;
-        if (!workerRepository.existsById(workerId)) return NO_WORKER;
-        if (!materialRepository.existsById(materialId)) return NO_MATERIAL;
+        if (!techMapRepository.existsById(techMapId)) {
+            log.warn(String.format("Executing operation failed! Technical map '#%d' doesn't exist.", techMapId));
+            return NO_TECH_MAP;
+        }
+        if (!workerRepository.existsById(workerId)) {
+            log.warn(String.format("Executing operation failed! Worker '#%d' doesn't exist.", workerId));
+            return NO_WORKER;
+        }
+        if (!materialRepository.existsById(materialId)) {
+            log.warn(String.format("Executing operation failed! Material '#%d' doesn't exist.", materialId));
+            return NO_MATERIAL;
+        }
 
         TechMapEntity executingTechMap = techMapRepository.findById(techMapId);
 
         //check if worker and material are in current technical map
-        if (executingTechMap.getWorker().getId() != workerId) return WORKER_NOT_MATCH;
-        if (executingTechMap.getMaterial().getId() != materialId) return MATERIAL_NOT_MATCH;
+        if (executingTechMap.getWorker().getId() != workerId) {
+            log.warn(String.format("Executing operation failed! Worker '#%d' is not in technical map '#%d'.", workerId, techMapId));
+            return WORKER_NOT_MATCH;
+        }
+        if (executingTechMap.getMaterial().getId() != materialId) {
+            log.warn(String.format("Executing operation failed! Material '#%d' is not in technical map '#%d'.", materialId, techMapId));
+            return MATERIAL_NOT_MATCH;
+        }
 
         ExecutedOperationsEntity operation = new ExecutedOperationsEntity(executingTechMap);
-        if (executedOperationsRepository.save(operation) == operation) return STATUS_OK;
-        else return NOT_SAVED;
+        if (executedOperationsRepository.save(operation) == operation) {
+            log.info(String.format("Operation '#%d' executed.", operation.getId()));
+            return STATUS_OK;
+        } else {
+            log.error("Unknown error!");
+            return NOT_SAVED;
+        }
     }
 
     public Iterable<ExecutedOperationsEntity> getAll() {
