@@ -33,6 +33,6 @@ public class WorkerPostDTO {
 
     @JsonIgnore
     public boolean isDataCorrect() {
-        return (name != null) & (lastName != null);
+        return (name != null) && (lastName != null);
     }
 }
