@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.leonov.neotraining.entities.TechMapEntity;
+import ru.leonov.neotraining.dto.tech_map_dto.TechMapDTO;
+import ru.leonov.neotraining.dto.tech_map_dto.TechMapPostDTO;
 import ru.leonov.neotraining.services.TechMapService;
 
 @Controller
@@ -30,9 +31,8 @@ public class TechMapController {
     @PostMapping("")
     @ResponseBody
     public ResponseEntity<String> add(
-            @ApiParam(value = "Id of worker associated with technical map.", required = true) @RequestParam int workerId,
-            @ApiParam(value = "Id of material associated with technical map.", required = true) @RequestParam int materialId) {
-        int savingStatus = techMapService.add(workerId, materialId);
+            @ApiParam(value = "New technical map as JSON object.", required = true) @RequestBody TechMapPostDTO techMap) {
+        int savingStatus = techMapService.add(techMap);
         switch (savingStatus) {
             case TechMapService.STATUS_OK:
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -52,13 +52,13 @@ public class TechMapController {
     //#########
     @ApiOperation(value = "Get list of all technical maps.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns list of all technical maps as JSON object.", response = TechMapEntity[].class),
+            @ApiResponse(code = 200, message = "Returns list of all technical maps as JSON object.", response = TechMapDTO[].class),
             @ApiResponse(code = 204, message = "Returns empty list if no technical maps in database.")
     })
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<Iterable<TechMapEntity>> getAll() {
-        Iterable<TechMapEntity> techMapList = techMapService.getAll();
+    public ResponseEntity<Iterable<TechMapDTO>> getAll() {
+        Iterable<TechMapDTO> techMapList = techMapService.getAll();
         if (techMapList.iterator().hasNext()) {
             return new ResponseEntity<>(techMapList, HttpStatus.OK);
         } else {
@@ -72,14 +72,14 @@ public class TechMapController {
     //#########
     @ApiOperation(value = "Get specific technical map with id={id}.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested technical map as JSON object.", response = TechMapEntity.class),
+            @ApiResponse(code = 200, message = "Returns requested technical map as JSON object.", response = TechMapDTO.class),
             @ApiResponse(code = 404, message = "Requested technical map not found.")
     })
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<TechMapEntity> getById(
+    public ResponseEntity<TechMapDTO> getById(
             @ApiParam(value = "Id of requested technical map.", required = true) @PathVariable int id) {
-        TechMapEntity techMap = techMapService.getById(id);
+        TechMapDTO techMap = techMapService.getById(id);
         if (techMap != null) {
             return new ResponseEntity<>(techMap, HttpStatus.OK);
         } else {
