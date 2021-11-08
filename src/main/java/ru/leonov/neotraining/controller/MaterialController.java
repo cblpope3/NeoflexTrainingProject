@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.leonov.neotraining.entities.MaterialEntity;
+import ru.leonov.neotraining.dto.material_dto.MaterialDTO;
+import ru.leonov.neotraining.dto.material_dto.MaterialPostDTO;
 import ru.leonov.neotraining.services.MaterialService;
 
 @Controller
@@ -29,13 +30,16 @@ public class MaterialController {
     @PostMapping("")
     @ResponseBody
     public ResponseEntity<String> add(
-            @ApiParam(value = "Name of material.", required = true) @RequestParam String name) {
-        if (materialService.add(name)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            @ApiParam(value = "New material as JSON object.", required = true) @RequestBody MaterialPostDTO material) {
+        if (material.isDataCorrect()) {
+            if (materialService.add(material)) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     //#########
@@ -43,13 +47,13 @@ public class MaterialController {
     //#########
     @ApiOperation(value = "Get list of all materials.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns list of all materials as JSON object.", response = MaterialEntity[].class),
+            @ApiResponse(code = 200, message = "Returns list of all materials as JSON object.", response = MaterialDTO[].class),
             @ApiResponse(code = 204, message = "Returns empty list if no materials in database.")
     })
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<Iterable<MaterialEntity>> getAll() {
-        Iterable<MaterialEntity> materialList = materialService.getAll();
+    public ResponseEntity<Iterable<MaterialDTO>> getAll() {
+        Iterable<MaterialDTO> materialList = materialService.getAll();
         if (materialList.iterator().hasNext()) {
             return new ResponseEntity<>(materialList, HttpStatus.OK);
         } else {
@@ -63,14 +67,14 @@ public class MaterialController {
     //#########
     @ApiOperation(value = "Get specific material with id={id}.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested material as JSON object.", response = MaterialEntity.class),
+            @ApiResponse(code = 200, message = "Returns requested material as JSON object.", response = MaterialDTO.class),
             @ApiResponse(code = 404, message = "Requested material not found.")
     })
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<MaterialEntity> getById(
+    public ResponseEntity<MaterialDTO> getById(
             @ApiParam(value = "Id of requested material.", required = true) @PathVariable int id) {
-        MaterialEntity material = materialService.getById(id);
+        MaterialDTO material = materialService.getById(id);
         if (material != null) {
             return new ResponseEntity<>(material, HttpStatus.OK);
         } else {
