@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.leonov.neotraining.data_containers.ExecutedOperationsJSONContainer;
-import ru.leonov.neotraining.entities.ExecutedOperationsEntity;
+import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsDTO;
+import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsPostDTO;
 import ru.leonov.neotraining.services.ExecutedOperationsService;
 
 @Controller
@@ -33,11 +33,9 @@ public class ExecutedOperationsController {
     @ResponseBody
     public ResponseEntity<String> add(
             @ApiParam(value = "JSON object that contains information about operation to be executed.", required = true)
-            @RequestBody ExecutedOperationsJSONContainer request) {
-        int workerId = request.getWorkerId();
-        int materialId = request.getMaterialId();
-        int techMapId = request.getTechMapId();
-        switch (executedOpsService.executeOperation(workerId, materialId, techMapId)) {
+            @RequestBody ExecutedOperationsPostDTO request) {
+
+        switch (executedOpsService.executeOperation(request)) {
             case ExecutedOperationsService.STATUS_OK:
                 return new ResponseEntity<>(HttpStatus.OK);
             case ExecutedOperationsService.NO_TECH_MAP:
@@ -62,13 +60,13 @@ public class ExecutedOperationsController {
     //#########
     @ApiOperation(value = "Get list of all executed operations.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns list of all executed operations as JSON object.", response = ExecutedOperationsEntity[].class),
+            @ApiResponse(code = 200, message = "Returns list of all executed operations as JSON object.", response = ExecutedOperationsDTO[].class),
             @ApiResponse(code = 204, message = "Returns empty list if no executed operations in database.")
     })
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<Iterable<ExecutedOperationsEntity>> getAll() {
-        Iterable<ExecutedOperationsEntity> operationsList = executedOpsService.getAll();
+    public ResponseEntity<Iterable<ExecutedOperationsDTO>> getAll() {
+        Iterable<ExecutedOperationsDTO> operationsList = executedOpsService.getAll();
         if (operationsList.iterator().hasNext()) {
             return new ResponseEntity<>(operationsList, HttpStatus.OK);
         } else {
@@ -81,14 +79,14 @@ public class ExecutedOperationsController {
     //#########
     @ApiOperation(value = "Get specific operation with id={id}.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested executed operation as JSON object.", response = ExecutedOperationsEntity.class),
+            @ApiResponse(code = 200, message = "Returns requested executed operation as JSON object.", response = ExecutedOperationsDTO.class),
             @ApiResponse(code = 404, message = "Requested operation not found.")
     })
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ExecutedOperationsEntity> getById(
+    public ResponseEntity<ExecutedOperationsDTO> getById(
             @ApiParam(value = "Id of requested executed operation.", required = true) @PathVariable int id) {
-        ExecutedOperationsEntity operation = executedOpsService.getById(id);
+        ExecutedOperationsDTO operation = executedOpsService.getById(id);
         if (operation != null) {
             return new ResponseEntity<>(operation, HttpStatus.OK);
         } else {

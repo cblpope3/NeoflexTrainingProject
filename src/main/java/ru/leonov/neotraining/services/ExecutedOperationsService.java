@@ -3,8 +3,11 @@ package ru.leonov.neotraining.services;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsDTO;
+import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsPostDTO;
 import ru.leonov.neotraining.entities.ExecutedOperationsEntity;
 import ru.leonov.neotraining.entities.TechMapEntity;
+import ru.leonov.neotraining.mappers.ExecutedOperationsMapper;
 import ru.leonov.neotraining.repositories.ExecutedOperationsRepository;
 import ru.leonov.neotraining.repositories.MaterialRepository;
 import ru.leonov.neotraining.repositories.TechMapRepository;
@@ -23,6 +26,9 @@ public class ExecutedOperationsService {
     public static final int NOT_SAVED = 6;
 
     private static final Logger log = Logger.getLogger(ExecutedOperationsService.class);
+
+    @Autowired
+    private ExecutedOperationsMapper executedOperationsMapper;
 
     @Autowired
     private ExecutedOperationsRepository executedOperationsRepository;
@@ -46,7 +52,10 @@ public class ExecutedOperationsService {
      * '5' if material not match techMap,
      * '6' if techMap not saved properly.
      */
-    public int executeOperation(int workerId, int materialId, int techMapId) {
+    public int executeOperation(ExecutedOperationsPostDTO request) {
+        int techMapId = request.getTechMapId();
+        int workerId = request.getWorkerId();
+        int materialId = request.getMaterialId();
 
         //check if worker, material and technical map exist in database
         if (!techMapRepository.existsById(techMapId)) {
@@ -84,13 +93,14 @@ public class ExecutedOperationsService {
         }
     }
 
-    public Iterable<ExecutedOperationsEntity> getAll() {
-        return executedOperationsRepository.findAll();
+    public Iterable<ExecutedOperationsDTO> getAll() {
+        return executedOperationsMapper.executedOpsEntityToExecutedOpsDtoAll(executedOperationsRepository.findAll());
     }
 
-    public ExecutedOperationsEntity getById(int id) {
-        if (executedOperationsRepository.existsById(id)) return executedOperationsRepository.findById(id);
-        else return null;
+    public ExecutedOperationsDTO getById(int id) {
+        if (executedOperationsRepository.existsById(id)) {
+            return executedOperationsMapper.executedOpsEntityToExecutedOpsDto(executedOperationsRepository.findById(id));
+        } else return null;
     }
 
     public boolean deleteById(int id) {
