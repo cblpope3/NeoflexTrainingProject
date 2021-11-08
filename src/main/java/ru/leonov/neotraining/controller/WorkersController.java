@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.leonov.neotraining.entities.WorkerEntity;
+import ru.leonov.neotraining.dto.workers_dto.WorkerDTO;
+import ru.leonov.neotraining.dto.workers_dto.WorkerPostDTO;
 import ru.leonov.neotraining.services.WorkersService;
 
 @Controller
@@ -28,13 +29,16 @@ public class WorkersController {
     })
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<String> addWorker(
-            @ApiParam(value = "Name of worker.", required = true) @RequestParam String name,
-            @ApiParam(value = "Last name of worker.", required = true) @RequestParam String lastName) {
-        if (workersService.addWorker(name, lastName)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> add(
+            @ApiParam(value = "New worker as JSON object.", required = true) @RequestBody WorkerPostDTO worker) {
+        if (worker.isDataCorrect()) {
+            if (workersService.add(worker)) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -43,13 +47,13 @@ public class WorkersController {
     //#########
     @ApiOperation(value = "Get list of all workers.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns list of all workers as JSON object.", response = WorkerEntity[].class),
+            @ApiResponse(code = 200, message = "Returns list of all workers as JSON object.", response = WorkerDTO[].class),
             @ApiResponse(code = 204, message = "Returns empty list if no workers in database.")
     })
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<Iterable<WorkerEntity>> getAllWorkers() {
-        Iterable<WorkerEntity> workersList = workersService.getAllWorkers();
+    public ResponseEntity<Iterable<WorkerDTO>> getAll() {
+        Iterable<WorkerDTO> workersList = workersService.getAll();
         if (workersList.iterator().hasNext()) {
             return new ResponseEntity<>(workersList, HttpStatus.OK);
         } else {
@@ -63,14 +67,14 @@ public class WorkersController {
     //#########
     @ApiOperation(value = "Get specific worker with id={id}.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested worker as JSON object.", response = WorkerEntity.class),
+            @ApiResponse(code = 200, message = "Returns requested worker as JSON object.", response = WorkerDTO.class),
             @ApiResponse(code = 404, message = "Requested worker not found.")
     })
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<WorkerEntity> getWorkerById(@ApiParam(value = "Id of requested worker.", required = true)
-                                                      @PathVariable int id) {
-        WorkerEntity worker = workersService.getById(id);
+    public ResponseEntity<WorkerDTO> getById(@ApiParam(value = "Id of requested worker.", required = true)
+                                             @PathVariable int id) {
+        WorkerDTO worker = workersService.getById(id);
         if (worker != null) {
             return new ResponseEntity<>(worker, HttpStatus.OK);
         } else {
@@ -88,7 +92,7 @@ public class WorkersController {
     })
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<String> updateWorkerById(
+    public ResponseEntity<String> updateById(
             @ApiParam(value = "Id of requested worker.", required = true)
             @PathVariable int id,
             @ApiParam(value = "New name of worker. Remains the same if empty.")
@@ -109,7 +113,7 @@ public class WorkersController {
     })
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<String> deleteWorkerById(@ApiParam(value = "Id of requested worker.", required = true) @PathVariable int id) {
+    public ResponseEntity<String> deleteById(@ApiParam(value = "Id of requested worker.", required = true) @PathVariable int id) {
         if (workersService.deleteById(id)) return new ResponseEntity<>(HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
