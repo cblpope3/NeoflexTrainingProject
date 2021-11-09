@@ -7,8 +7,8 @@ import javax.persistence.*;
 public class MaterialEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "materials_seq_gen")
+    @SequenceGenerator(name = "materials_seq_gen", sequenceName = "materials_id_sequence", allocationSize = 1)
     private int id;
 
     @Column(name = "name")

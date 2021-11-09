@@ -1,0 +1,267 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
+  - changeSet:
+      id: create_workers_table
+      author: nickolay_leonov
+      changes:
+        - createTable:
+            tableName: workers
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR
+              - column:
+                  name: last_name
+                  type: VARCHAR
+        - createSequence:
+            cycle: true
+            incrementBy: 1
+            schemaName: public
+            sequenceName: workers_id_sequence
+            startValue: 100
+  - changeSet:
+      id: create_materials_table
+      author: nickolay_leonov
+      changes:
+        - createTable:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR
+        - createSequence:
+            cycle: true
+            incrementBy: 1
+            schemaName: public
+            sequenceName: materials_id_sequence
+            startValue: 100
+  - changeSet:
+      id: create_technical_maps_table
+      author: nickolay_leonov
+      changes:
+        - createTable:
+            tableName: technical_maps
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_techMap_worker
+                    references: workers(id)
+              - column:
+                  name: material_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_techMap_material
+                    references: materials(id)
+        - createSequence:
+            cycle: true
+            incrementBy: 1
+            schemaName: public
+            sequenceName: technical_maps_id_sequence
+            startValue: 100
+  - changeSet:
+      id: create_executed_operations_table
+      author: nickolay_leonov
+      changes:
+        - createTable:
+            tableName: executed_operations
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: date
+                  type: VARCHAR
+              - column:
+                  name: tech_map_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_executedOps_techMap
+                    references: technical_maps(id)
+        - createSequence:
+            cycle: true
+            incrementBy: 1
+            schemaName: public
+            sequenceName: executed_operations_id_sequence
+            startValue: 100
+  - changeSet:
+      id: fill_tables
+      author: nickolay_leonov
+      comment: "fill tables with test data"
+      changes:
+        - insert:
+            tableName: workers
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: "Daenerys"
+              - column:
+                  name: last_name
+                  value: "Targaryen"
+        - insert:
+            tableName: workers
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: "Jon"
+              - column:
+                  name: last_name
+                  value: "Snow"
+        - insert:
+            tableName: workers
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: "Tyrion"
+              - column:
+                  name: last_name
+                  value: "Lannister"
+        - insert:
+            tableName: workers
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: name
+                  value: "Arya"
+              - column:
+                  name: last_name
+                  value: "Stark"
+        - insert:
+            tableName: workers
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: name
+                  value: "Theon"
+              - column:
+                  name: last_name
+                  value: "Greyjoy"
+        - insert:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: "wood"
+        - insert:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: "stone"
+        - insert:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: "steel"
+        - insert:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: name
+                  value: "plastic"
+        - insert:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: name
+                  value: "fabric"
+        - insert:
+            tableName: technical_maps
+            columns:
+              - column:
+                  name: worker_id
+                  value: 1
+              - column:
+                  name: material_id
+                  valueComputed: 2
+        - insert:
+            tableName: technical_maps
+            columns:
+              - column:
+                  name: worker_id
+                  value: 4
+              - column:
+                  name: material_id
+                  valueComputed: 5
+        - insert:
+            tableName: technical_maps
+            columns:
+              - column:
+                  name: worker_id
+                  value: 5
+              - column:
+                  name: material_id
+                  valueComputed: 1
+        - insert:
+            tableName: technical_maps
+            columns:
+              - column:
+                  name: worker_id
+                  value: 3
+              - column:
+                  name: material_id
+                  valueComputed: 4
+        - insert:
+            tableName: technical_maps
+            columns:
+              - column:
+                  name: worker_id
+                  value: 1
+              - column:
+                  name: material_id
+                  valueComputed: 5

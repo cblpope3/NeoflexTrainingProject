@@ -7,7 +7,8 @@ import javax.persistence.*;
 public class TechMapEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tech_map_seq_gen")
+    @SequenceGenerator(name = "tech_map_seq_gen", sequenceName = "technical_maps_id_sequence", allocationSize = 1)
     private int id;
 
     @ManyToOne(optional = false)

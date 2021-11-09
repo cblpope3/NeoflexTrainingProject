@@ -8,7 +8,8 @@ import java.util.Date;
 public class ExecutedOperationsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "operations_seq_gen")
+    @SequenceGenerator(name = "operations_seq_gen", sequenceName = "executed_operations_id_sequence", allocationSize = 1)
     private int id;
 
     @ManyToOne(optional = false)
