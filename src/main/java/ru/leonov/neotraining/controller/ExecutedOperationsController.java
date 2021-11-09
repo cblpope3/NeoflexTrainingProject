@@ -18,42 +18,43 @@ public class ExecutedOperationsController {
     @Autowired
     private ExecutedOperationsService executedOpsService;
 
+    //Uncomment this controller to get ability of manual operation execution
     //#######
     //  ADD
     //#######
-    @ApiOperation(value = "Try to execute an operation.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Operation executed successfully."),
-            @ApiResponse(code = 400, message = "Parameters missing."),
-            @ApiResponse(code = 404, message = "Several parameters not found in database. Read message in response body."),
-            @ApiResponse(code = 422, message = "Worker or material don't match technical map. Read message in response body."),
-            @ApiResponse(code = 500, message = "Internal server error. Read message in response body.")
-    })
-    @PostMapping("")
-    @ResponseBody
-    public ResponseEntity<String> add(
-            @ApiParam(value = "JSON object that contains information about operation to be executed.", required = true)
-            @RequestBody ExecutedOperationsPostDTO request) {
-
-        switch (executedOpsService.executeOperation(request)) {
-            case ExecutedOperationsService.STATUS_OK:
-                return new ResponseEntity<>(HttpStatus.OK);
-            case ExecutedOperationsService.NO_TECH_MAP:
-                return new ResponseEntity<>("Technical map not found in database.", HttpStatus.NOT_FOUND);
-            case ExecutedOperationsService.NO_WORKER:
-                return new ResponseEntity<>("Worker not found in database.", HttpStatus.NOT_FOUND);
-            case ExecutedOperationsService.NO_MATERIAL:
-                return new ResponseEntity<>("Material not found in database.", HttpStatus.NOT_FOUND);
-            case ExecutedOperationsService.WORKER_NOT_MATCH:
-                return new ResponseEntity<>("Worker don't match technical map.", HttpStatus.UNPROCESSABLE_ENTITY);
-            case ExecutedOperationsService.MATERIAL_NOT_MATCH:
-                return new ResponseEntity<>("Material don't match technical map.", HttpStatus.UNPROCESSABLE_ENTITY);
-            case ExecutedOperationsService.NOT_SAVED:
-                return new ResponseEntity<>("Executed operation haven't been saved.", HttpStatus.INTERNAL_SERVER_ERROR);
-            default:
-                return new ResponseEntity<>("Unknown error.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @ApiOperation(value = "Try to execute an operation.")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Operation executed successfully."),
+//            @ApiResponse(code = 400, message = "Parameters missing."),
+//            @ApiResponse(code = 404, message = "Several parameters not found in database. Read message in response body."),
+//            @ApiResponse(code = 422, message = "Worker or material don't match technical map. Read message in response body."),
+//            @ApiResponse(code = 500, message = "Internal server error. Read message in response body.")
+//    })
+//    @PostMapping("")
+//    @ResponseBody
+//    public ResponseEntity<String> add(
+//            @ApiParam(value = "JSON object that contains information about operation to be executed.", required = true)
+//            @RequestBody ExecutedOperationsPostDTO request) {
+//
+//        switch (executedOpsService.executeOperation(request)) {
+//            case ExecutedOperationsService.STATUS_OK:
+//                return new ResponseEntity<>(HttpStatus.OK);
+//            case ExecutedOperationsService.NO_TECH_MAP:
+//                return new ResponseEntity<>("Technical map not found in database.", HttpStatus.NOT_FOUND);
+//            case ExecutedOperationsService.NO_WORKER:
+//                return new ResponseEntity<>("Worker not found in database.", HttpStatus.NOT_FOUND);
+//            case ExecutedOperationsService.NO_MATERIAL:
+//                return new ResponseEntity<>("Material not found in database.", HttpStatus.NOT_FOUND);
+//            case ExecutedOperationsService.WORKER_NOT_MATCH:
+//                return new ResponseEntity<>("Worker don't match technical map.", HttpStatus.UNPROCESSABLE_ENTITY);
+//            case ExecutedOperationsService.MATERIAL_NOT_MATCH:
+//                return new ResponseEntity<>("Material don't match technical map.", HttpStatus.UNPROCESSABLE_ENTITY);
+//            case ExecutedOperationsService.NOT_SAVED:
+//                return new ResponseEntity<>("Executed operation haven't been saved.", HttpStatus.INTERNAL_SERVER_ERROR);
+//            default:
+//                return new ResponseEntity<>("Unknown error.", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     //#########
     // GET ALL
@@ -77,36 +78,36 @@ public class ExecutedOperationsController {
     //#########
     // GET ONE
     //#########
-    @ApiOperation(value = "Get specific operation with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested executed operation as JSON object.", response = ExecutedOperationsDTO.class),
-            @ApiResponse(code = 404, message = "Requested operation not found.")
-    })
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<ExecutedOperationsDTO> getById(
-            @ApiParam(value = "Id of requested executed operation.", required = true) @PathVariable int id) {
-        ExecutedOperationsDTO operation = executedOpsService.getById(id);
-        if (operation != null) {
-            return new ResponseEntity<>(operation, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+//    @ApiOperation(value = "Get specific operation with id={id}.")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Returns requested executed operation as JSON object.", response = ExecutedOperationsDTO.class),
+//            @ApiResponse(code = 404, message = "Requested operation not found.")
+//    })
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public ResponseEntity<ExecutedOperationsDTO> getById(
+//            @ApiParam(value = "Id of requested executed operation.", required = true) @PathVariable int id) {
+//        ExecutedOperationsDTO operation = executedOpsService.getById(id);
+//        if (operation != null) {
+//            return new ResponseEntity<>(operation, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     //#########
     // DELETE
     //#########
-    @ApiOperation(value = "Delete executed operation with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Requested operation deleted successfully."),
-            @ApiResponse(code = 404, message = "Requested operation not found.")
-    })
-    @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<String> deleteById(
-            @ApiParam(value = "Id of requested executed operation.", required = true) @PathVariable int id) {
-        if (executedOpsService.deleteById(id)) return new ResponseEntity<>(HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @ApiOperation(value = "Delete executed operation with id={id}.")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Requested operation deleted successfully."),
+//            @ApiResponse(code = 404, message = "Requested operation not found.")
+//    })
+//    @DeleteMapping("/{id}")
+//    @ResponseBody
+//    public ResponseEntity<String> deleteById(
+//            @ApiParam(value = "Id of requested executed operation.", required = true) @PathVariable int id) {
+//        if (executedOpsService.deleteById(id)) return new ResponseEntity<>(HttpStatus.OK);
+//        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 }
