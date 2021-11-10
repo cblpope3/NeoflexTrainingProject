@@ -1,7 +1,9 @@
 package ru.leonov.neotraining.entities;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "executed_operations")
@@ -23,8 +25,11 @@ public class ExecutedOperationsEntity {
 
     public ExecutedOperationsEntity(TechMapEntity techMap) {
         this.techMap = techMap;
-        Date date = new Date();
-        this.date = date.toString();
+
+        ZoneId currentTimeZone = ZoneId.of("Europe/Moscow");
+        ZonedDateTime currentDate = ZonedDateTime.now(currentTimeZone);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss z");
+        this.date = currentDate.format(dateFormatter);
     }
 
     public int getId() {
