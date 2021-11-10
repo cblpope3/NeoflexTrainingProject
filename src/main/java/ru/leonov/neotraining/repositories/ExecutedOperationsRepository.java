@@ -8,4 +8,6 @@ import ru.leonov.neotraining.entities.TechMapEntity;
 @Repository
 public interface ExecutedOperationsRepository extends CrudRepository<ExecutedOperationsEntity, Integer> {
     ExecutedOperationsEntity findById(int id);
+
+    Iterable<ExecutedOperationsEntity> findAllByOrderByIdDesc();
 }

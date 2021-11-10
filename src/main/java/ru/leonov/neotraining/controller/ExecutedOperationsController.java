@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsDTO;
-import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsPostDTO;
 import ru.leonov.neotraining.services.ExecutedOperationsService;
 
 @Controller
@@ -17,6 +17,17 @@ public class ExecutedOperationsController {
 
     @Autowired
     private ExecutedOperationsService executedOpsService;
+
+    //#########
+    // REPORT
+    //#########
+    @ApiOperation(value = "Get executed operations report.")
+    @GetMapping("/ui")
+    public String getReport(Model model) {
+        Iterable<ExecutedOperationsDTO> operationsList = executedOpsService.getAll();
+        model.addAttribute("operations", operationsList);
+        return "operations_report";
+    }
 
     //Uncomment this controller to get ability of manual operation execution
     //#######

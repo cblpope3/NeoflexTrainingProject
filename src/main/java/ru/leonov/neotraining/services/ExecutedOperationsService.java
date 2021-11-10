@@ -94,7 +94,7 @@ public class ExecutedOperationsService {
     }
 
     public Iterable<ExecutedOperationsDTO> getAll() {
-        return executedOperationsMapper.executedOpsEntityToExecutedOpsDtoAll(executedOperationsRepository.findAll());
+        return executedOperationsMapper.executedOpsEntityToExecutedOpsDtoAll(executedOperationsRepository.findAllByOrderByIdDesc());
     }
 
     public ExecutedOperationsDTO getById(int id) {
