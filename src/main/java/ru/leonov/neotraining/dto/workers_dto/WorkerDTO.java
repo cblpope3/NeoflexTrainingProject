@@ -12,6 +12,12 @@ public class WorkerDTO {
     @JsonProperty("lastName")
     private String lastName;
 
+    public WorkerDTO(int id, String name, String lastName) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+    }
+
     public int getId() {
         return id;
     }
@@ -34,5 +40,13 @@ public class WorkerDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String toJSON() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"name\":\"" + name +
+                "\", \"lastName\":\"" + lastName +
+                "\"}";
     }
 }

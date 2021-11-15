@@ -14,11 +14,11 @@ import ru.leonov.neotraining.repositories.WorkerRepository;
 public class TechMapService {
 
     //Variables used by methods 'add' and 'updateById'
-    public static final int STATUS_OK = 0;
-    public static final int NO_TECH_MAP = 1;
-    public static final int NO_WORKER = 2;
-    public static final int NO_MATERIAL = 3;
-    public static final int NOT_SAVED = 4;
+    public static final int STATUS_OK = 10;
+    public static final int NO_TECH_MAP = 11;
+    public static final int NO_WORKER = 12;
+    public static final int NO_MATERIAL = 13;
+    public static final int NOT_SAVED = 14;
 
     @Autowired
     private TechMapMapper techMapMapper;

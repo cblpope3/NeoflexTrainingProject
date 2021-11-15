@@ -10,6 +10,11 @@ public class MaterialDTO {
     @JsonProperty("name")
     private String name;
 
+    public MaterialDTO(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }
@@ -24,5 +29,12 @@ public class MaterialDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String toJSON() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"name\":\"" + name + '\"' +
+                '}';
     }
 }
