@@ -15,6 +15,12 @@ public class TechMapDTO {
     @JsonProperty("material")
     private MaterialDTO material;
 
+    public TechMapDTO(int id, WorkerDTO worker, MaterialDTO material) {
+        this.id = id;
+        this.worker = worker;
+        this.material = material;
+    }
+
     public int getId() {
         return id;
     }
@@ -37,5 +43,13 @@ public class TechMapDTO {
 
     public void setMaterial(MaterialDTO material) {
         this.material = material;
+    }
+
+    public String toJSON() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"worker\":" + worker.toJSON() +
+                ", \"material\":" + material.toJSON() +
+                '}';
     }
 }

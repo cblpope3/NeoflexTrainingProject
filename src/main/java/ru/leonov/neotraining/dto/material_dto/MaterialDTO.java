@@ -30,4 +30,11 @@ public class MaterialDTO {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String toJSON() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"name\":\"" + name + '\"' +
+                '}';
+    }
 }

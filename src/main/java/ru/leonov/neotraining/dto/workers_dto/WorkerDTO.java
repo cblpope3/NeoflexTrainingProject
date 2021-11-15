@@ -41,4 +41,12 @@ public class WorkerDTO {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public String toJSON() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"name\":\"" + name +
+                "\", \"lastName\":\"" + lastName +
+                "\"}";
+    }
 }
