@@ -13,6 +13,15 @@ public class ExecutedOperationsPostDTO {
     @JsonProperty("techMapId")
     private int techMapId;
 
+    public ExecutedOperationsPostDTO() {
+    }
+
+    public ExecutedOperationsPostDTO(int workerId, int materialId, int techMapId) {
+        this.workerId = workerId;
+        this.materialId = materialId;
+        this.techMapId = techMapId;
+    }
+
     public int getWorkerId() {
         return workerId;
     }
