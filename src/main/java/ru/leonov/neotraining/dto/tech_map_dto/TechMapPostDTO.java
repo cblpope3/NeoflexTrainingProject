@@ -10,6 +10,14 @@ public class TechMapPostDTO {
     @JsonProperty("material_id")
     private int materialId;
 
+    public TechMapPostDTO() {
+    }
+
+    public TechMapPostDTO(int workerId, int materialId) {
+        this.workerId = workerId;
+        this.materialId = materialId;
+    }
+
     public int getWorkerId() {
         return workerId;
     }
