@@ -11,11 +11,15 @@ import ru.leonov.neotraining.repositories.MaterialRepository;
 @Service
 public class MaterialService {
 
-    @Autowired
-    private MaterialMapper materialMapper;
+    private final MaterialRepository materialRepository;
+
+    private final MaterialMapper materialMapper;
 
     @Autowired
-    private MaterialRepository materialRepository;
+    public MaterialService(MaterialRepository materialRepository, MaterialMapper materialMapper) {
+        this.materialMapper = materialMapper;
+        this.materialRepository = materialRepository;
+    }
 
     public boolean add(MaterialPostDTO materialPostDTO) {
         MaterialEntity materialEntity = materialMapper.materialPostDtoToMaterialEntity(materialPostDTO);

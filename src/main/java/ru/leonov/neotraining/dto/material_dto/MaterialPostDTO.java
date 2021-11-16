@@ -8,6 +8,13 @@ public class MaterialPostDTO {
     @JsonProperty("name")
     private String name;
 
+    public MaterialPostDTO() {
+    }
+
+    public MaterialPostDTO(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
