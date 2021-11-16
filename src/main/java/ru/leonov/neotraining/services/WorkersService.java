@@ -11,11 +11,15 @@ import ru.leonov.neotraining.repositories.WorkerRepository;
 @Service
 public class WorkersService {
 
-    @Autowired
-    private WorkersMapper workersMapper;
+    private final WorkersMapper workersMapper;
+
+    private final WorkerRepository workerRepository;
 
     @Autowired
-    private WorkerRepository workerRepository;
+    public WorkersService(WorkerRepository workerRepository, WorkersMapper workersMapper) {
+        this.workerRepository = workerRepository;
+        this.workersMapper = workersMapper;
+    }
 
     public boolean add(WorkerPostDTO workerDto) {
         WorkerEntity workerEntity = workersMapper.workerPostDtoToWorkerEntity(workerDto);
