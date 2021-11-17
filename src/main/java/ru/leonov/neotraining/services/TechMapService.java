@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.leonov.neotraining.dto.tech_map_dto.TechMapDTO;
 import ru.leonov.neotraining.dto.tech_map_dto.TechMapPostDTO;
+import ru.leonov.neotraining.entities.MaterialEntity;
 import ru.leonov.neotraining.entities.TechMapEntity;
+import ru.leonov.neotraining.entities.WorkerEntity;
 import ru.leonov.neotraining.mappers.TechMapMapper;
 import ru.leonov.neotraining.repositories.MaterialRepository;
 import ru.leonov.neotraining.repositories.TechMapRepository;
@@ -20,24 +22,28 @@ public class TechMapService {
     public static final int NO_MATERIAL = 13;
     public static final int NOT_SAVED = 14;
 
-    @Autowired
-    private TechMapMapper techMapMapper;
+    private final TechMapMapper techMapMapper;
+
+    private final TechMapRepository techMapRepository;
+
+    private final WorkerRepository workerRepository;
+
+    private final MaterialRepository materialRepository;
 
     @Autowired
-    private TechMapRepository techMapRepository;
-
-    @Autowired
-    private WorkerRepository workerRepository;
-
-    @Autowired
-    private MaterialRepository materialRepository;
+    public TechMapService(TechMapMapper techMapMapper, TechMapRepository techMapRepository, WorkerRepository workerRepository, MaterialRepository materialRepository) {
+        this.techMapMapper = techMapMapper;
+        this.techMapRepository = techMapRepository;
+        this.workerRepository = workerRepository;
+        this.materialRepository = materialRepository;
+    }
 
     /**
      * Method returns int with status code:
-     * '0' if techMap created successfully,
-     * '2' if worker not found in database,
-     * '3' if material not found in database,
-     * '4' if techMap not saved properly.
+     * '10' if techMap created successfully,
+     * '12' if worker not found in database,
+     * '13' if material not found in database,
+     * '14' if techMap not saved properly.
      */
     public int add(TechMapPostDTO newTechMap) {
         int workerId = newTechMap.getWorkerId();
@@ -47,9 +53,14 @@ public class TechMapService {
         if (!workerRepository.existsById(workerId)) return NO_WORKER;
         if (!materialRepository.existsById(materialId)) return NO_MATERIAL;
 
-        TechMapEntity techMap = new TechMapEntity(workerRepository.findById(workerId),
-                materialRepository.findById(materialId));
-        if (techMapRepository.save(techMap) == techMap) return STATUS_OK;
+        WorkerEntity worker = workerRepository.findById(workerId);
+        MaterialEntity material = materialRepository.findById(materialId);
+
+        TechMapEntity techMap = new TechMapEntity(worker, material);
+
+        boolean isSaved = techMapRepository.save(techMap).equals(techMap);
+
+        if (isSaved) return STATUS_OK;
         else return NOT_SAVED;
     }
 
@@ -65,11 +76,11 @@ public class TechMapService {
 
     /**
      * Method returns int with status code:
-     * '0' if techMap updated successfully,
-     * '1' if techMap not found in database,
-     * '2' if new worker not found in database,
-     * '3' if new material not found in database,
-     * '4' if techMap not saved properly.
+     * '10' if techMap updated successfully,
+     * '11' if techMap not found in database,
+     * '12' if new worker not found in database,
+     * '13' if new material not found in database,
+     * '14' if techMap not saved properly.
      */
     public int updateById(int id, String workerId, String materialId) {
 
@@ -90,7 +101,7 @@ public class TechMapService {
             if (!materialRepository.existsById(Integer.parseInt(materialId))) return NO_MATERIAL;
             else techMap.setMaterial(materialRepository.findById(Integer.parseInt(materialId)));
         }
-        if (techMapRepository.save(techMap) == techMap) return STATUS_OK;
+        if (techMapRepository.save(techMap).equals(techMap)) return STATUS_OK;
         else return NOT_SAVED;
     }
 

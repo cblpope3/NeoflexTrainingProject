@@ -15,6 +15,14 @@ public class WorkerPostDTO {
     @JsonProperty(value = "lastName", required = true)
     private String lastName;
 
+    public WorkerPostDTO() {
+    }
+
+    public WorkerPostDTO(String name, String lastName) {
+        this.name = name;
+        this.lastName = lastName;
+    }
+
     public String getName() {
         return name;
     }

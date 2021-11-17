@@ -17,40 +17,48 @@ import ru.leonov.neotraining.repositories.WorkerRepository;
 public class ExecutedOperationsService {
 
     //Variables used by method 'executeOperation'
-    public static final int STATUS_OK = 0;
-    public static final int NO_TECH_MAP = 1;
-    public static final int NO_WORKER = 2;
-    public static final int NO_MATERIAL = 3;
-    public static final int WORKER_NOT_MATCH = 4;
-    public static final int MATERIAL_NOT_MATCH = 5;
-    public static final int NOT_SAVED = 6;
+    public static final int STATUS_OK = 10;
+    public static final int NO_TECH_MAP = 11;
+    public static final int NO_WORKER = 12;
+    public static final int NO_MATERIAL = 13;
+    public static final int WORKER_NOT_MATCH = 14;
+    public static final int MATERIAL_NOT_MATCH = 15;
+    public static final int NOT_SAVED = 16;
 
     private static final Logger log = Logger.getLogger(ExecutedOperationsService.class);
 
-    @Autowired
-    private ExecutedOperationsMapper executedOperationsMapper;
+    private final ExecutedOperationsMapper executedOperationsMapper;
+
+    private final ExecutedOperationsRepository executedOperationsRepository;
+
+    private final WorkerRepository workerRepository;
+
+    private final MaterialRepository materialRepository;
+
+    private final TechMapRepository techMapRepository;
 
     @Autowired
-    private ExecutedOperationsRepository executedOperationsRepository;
-
-    @Autowired
-    private WorkerRepository workerRepository;
-
-    @Autowired
-    private MaterialRepository materialRepository;
-
-    @Autowired
-    private TechMapRepository techMapRepository;
+    public ExecutedOperationsService(ExecutedOperationsMapper executedOperationsMapper,
+                                     ExecutedOperationsRepository executedOperationsRepository,
+                                     WorkerRepository workerRepository,
+                                     MaterialRepository materialRepository,
+                                     TechMapRepository techMapRepository) {
+        this.executedOperationsMapper = executedOperationsMapper;
+        this.executedOperationsRepository = executedOperationsRepository;
+        this.workerRepository = workerRepository;
+        this.materialRepository = materialRepository;
+        this.techMapRepository = techMapRepository;
+    }
 
     /**
      * Method returns int with status code:
-     * '0' if operation executed successfully,
-     * '1' if techMap not found in database,
-     * '2' if worker not found in database,
-     * '3' if material not found in database,
-     * '4' if worker not match techMap,
-     * '5' if material not match techMap,
-     * '6' if techMap not saved properly.
+     * '10' if operation executed successfully,
+     * '11' if techMap not found in database,
+     * '12' if worker not found in database,
+     * '13' if material not found in database,
+     * '14' if worker not match techMap,
+     * '15' if material not match techMap,
+     * '16' if techMap not saved properly.
      */
     public int executeOperation(ExecutedOperationsPostDTO request) {
         int techMapId = request.getTechMapId();
@@ -84,7 +92,7 @@ public class ExecutedOperationsService {
         }
 
         ExecutedOperationsEntity operation = new ExecutedOperationsEntity(executingTechMap);
-        if (executedOperationsRepository.save(operation) == operation) {
+        if (executedOperationsRepository.save(operation).equals(operation)) {
             log.info(String.format("Operation '#%d' executed.", operation.getId()));
             return STATUS_OK;
         } else {

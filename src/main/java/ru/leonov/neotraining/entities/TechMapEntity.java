@@ -27,6 +27,12 @@ public class TechMapEntity {
         this.material = material;
     }
 
+    public TechMapEntity(int id, WorkerEntity worker, MaterialEntity material) {
+        this.id = id;
+        this.worker = worker;
+        this.material = material;
+    }
+
     public int getId() {
         return id;
     }
