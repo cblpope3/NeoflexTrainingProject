@@ -1,0 +1,209 @@
+openapi: 3.1.0
+info:
+  title: new_api
+  version: '1.0'
+  summary: Neoflex api
+  description: Neoflex training project API.
+  contact:
+    name: Nickolay Leonov
+    email: oo-nevermind-oo@mail.ru
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /worker:
+    post:
+      summary: Create new worker
+      operationId: post-user
+      responses:
+        '200':
+          description: Worker added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+              examples:
+                Create worker Viktor Petrov:
+                  value:
+                    name: Viktor
+                    lastName: Petrov
+        '400':
+          description: Parameters missing.
+        '500':
+          description: Worker not added.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                lastName:
+                  type: string
+                  minLength: 1
+                name:
+                  type: string
+                  minLength: 1
+              required:
+                - lastName
+                - name
+              x-examples:
+                example-1:
+                  lastName: string
+                  name: string
+            examples:
+              Create User Bob Fellow:
+                value:
+                  name: Bob
+                  lastName: Fellow
+        description: Post the necessary fields for the API to create a new worker.
+      description: Create a new user.
+    parameters: []
+    get:
+      summary: Get workers list
+      operationId: get-workers-list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: number
+                  lastName:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - lastName
+                  - name
+                x-examples:
+                  example-1:
+                    id: 0
+                    lastName: string
+                    name: string
+              examples: {}
+        '204':
+          description: No Content
+      description: Get list of all workers
+  '/worker/{workerId}':
+    parameters:
+      - schema:
+          type: string
+        name: workerId
+        in: path
+        required: true
+    get:
+      summary: Get worker info by ID
+      tags: []
+      responses:
+        '200':
+          description: Returns requested worker as JSON object.
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: number
+                  lastName:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - lastName
+                  - name
+                x-examples:
+                  example-1:
+                    id: 0
+                    lastName: string
+                    name: string
+              examples:
+                Get worker Ivanov Oleg:
+                  value:
+                    id: 142
+                    name: Oleg
+                    lastName: Ivanov
+        '404':
+          description: Requested worker not found.
+      operationId: get-workers-workerId
+      description: Get worker with specified id.
+    put:
+      summary: Change worker parameters
+      operationId: put-worker-workerId
+      responses:
+        '200':
+          description: Requested worker updated successfully.
+        '404':
+          description: Requested worker not found.
+      description: 'Change name and last name of worker with id={id}.'
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: id
+          required: true
+          description: Id of requested worker.
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: New name of worker. Remains the same if empty.
+        - schema:
+            type: string
+          in: query
+          name: lastName
+          description: New last name of worker. Remains the same if empty.
+    delete:
+      summary: Delete worker
+      operationId: delete-worker-workerId
+      responses:
+        '200':
+          description: Requested worker deleted successfully.
+        '404':
+          description: Requested worker not found.
+      description: 'Delete worker with id={id}.'
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: id
+          description: Id of requested worker.
+          required: true
+components:
+  schemas:
+    Worker:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          lastName: string
+          name: string
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+      required:
+        - id
+        - name
+        - lastName
+      title: Worker
+      examples:
+        - id: 0
+          name: string
+          lastName: string
