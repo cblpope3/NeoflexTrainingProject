@@ -31,22 +31,11 @@
             <version>2.9.2</version>
             <scope>compile</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.openapitools</groupId>-->
-<!--            <artifactId>jackson-databind-nullable</artifactId>-->
-<!--            <version>0.2.1</version>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
         <finalName>neoflex-api</finalName>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <version>${spring.version}</version>-->
-<!--            </plugin>-->
-
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -63,7 +52,6 @@
                             </inputSpec>
                             <generatorName>spring</generatorName>
                             <configOptions>
-<!--                                <sourceFolder>${project.basedir}/src/main/java/</sourceFolder>-->
                                 <artifactDescription>Test API</artifactDescription>
                                 <artifactId>openapi-spring</artifactId>
                                 <artifactVersion>0.0.1</artifactVersion>

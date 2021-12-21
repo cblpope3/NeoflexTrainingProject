@@ -1,5 +1,10 @@
 package ru.leonov.neotraining.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -7,6 +12,10 @@ import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "executed_operations")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ExecutedOperationsEntity {
 
     @Id
@@ -20,9 +29,6 @@ public class ExecutedOperationsEntity {
 
     private String date;
 
-    public ExecutedOperationsEntity() {
-    }
-
     public ExecutedOperationsEntity(TechMapEntity techMap) {
         this.techMap = techMap;
 
@@ -30,30 +36,6 @@ public class ExecutedOperationsEntity {
         ZonedDateTime currentDate = ZonedDateTime.now(currentTimeZone);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss z");
         this.date = currentDate.format(dateFormatter);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public TechMapEntity getTechMap() {
-        return techMap;
-    }
-
-    public void setTechMap(TechMapEntity techMap) {
-        this.techMap = techMap;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     @Override
