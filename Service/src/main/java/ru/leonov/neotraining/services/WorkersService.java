@@ -2,11 +2,13 @@ package ru.leonov.neotraining.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.leonov.neotraining.dto.workers_dto.WorkerDTO;
-import ru.leonov.neotraining.dto.workers_dto.WorkerPostDTO;
 import ru.leonov.neotraining.entities.WorkerEntity;
 import ru.leonov.neotraining.mappers.WorkersMapper;
+import ru.leonov.neotraining.model.WorkerGeneratedDTO;
+import ru.leonov.neotraining.model.WorkerPostGeneratedDTO;
 import ru.leonov.neotraining.repositories.WorkerRepository;
+
+import java.util.Set;
 
 @Service
 public class WorkersService {
@@ -21,16 +23,16 @@ public class WorkersService {
         this.workersMapper = workersMapper;
     }
 
-    public boolean add(WorkerPostDTO workerDto) {
+    public boolean add(WorkerPostGeneratedDTO workerDto) {
         WorkerEntity workerEntity = workersMapper.workerPostDtoToWorkerEntity(workerDto);
         return workerRepository.save(workerEntity).equals(workerEntity);
     }
 
-    public Iterable<WorkerDTO> getAll() {
+    public Set<WorkerGeneratedDTO> getAll() {
         return workersMapper.workersToWorkersAllDto(workerRepository.findAll());
     }
 
-    public WorkerDTO getById(int id) {
+    public WorkerGeneratedDTO getById(int id) {
         if (workerRepository.existsById(id)) {
             return workersMapper.workerEntityToWorkerDto(workerRepository.findById(id));
         } else return null;

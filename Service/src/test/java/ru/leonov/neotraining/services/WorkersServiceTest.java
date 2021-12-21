@@ -1,37 +1,51 @@
 package ru.leonov.neotraining.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.leonov.neotraining.dto.workers_dto.WorkerDTO;
-import ru.leonov.neotraining.dto.workers_dto.WorkerPostDTO;
 import ru.leonov.neotraining.entities.WorkerEntity;
 import ru.leonov.neotraining.mappers.WorkersMapperImpl;
+import ru.leonov.neotraining.model.WorkerGeneratedDTO;
+import ru.leonov.neotraining.model.WorkerPostGeneratedDTO;
 import ru.leonov.neotraining.repositories.WorkerRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 class WorkersServiceTest {
 
-    private final WorkerEntity testWorkerEntity1 = new WorkerEntity("testName1", "testLastName1");
-    private final WorkerEntity testWorkerEntity2 = new WorkerEntity("testName2", "testLastName2");
-    private final WorkerPostDTO testWorkerPostDTO1 = new WorkerPostDTO("testName1", "testLastName1");
-    private final WorkerDTO testWorkerDTO1 = new WorkerDTO(11, "testName1", "testLastName1");
-    private final WorkerDTO testWorkerDTO2 = new WorkerDTO(12, "testName2", "testLastName2");
+    private static final WorkerEntity testWorkerEntity1 = new WorkerEntity("testName1", "testLastName1");
+    private static final WorkerEntity testWorkerEntity2 = new WorkerEntity("testName2", "testLastName2");
+    private static final WorkerPostGeneratedDTO testWorkerPostDTO1 = new WorkerPostGeneratedDTO();
+    private static final WorkerGeneratedDTO testWorkerDTO1 = new WorkerGeneratedDTO();
+    private static final WorkerGeneratedDTO testWorkerDTO2 = new WorkerGeneratedDTO();
     @MockBean
     WorkerRepository workerRepository;
     @MockBean
     WorkersMapperImpl workersMapper;
     WorkersService workersService;
+
+    @BeforeAll
+    static void setUpAll() {
+        testWorkerPostDTO1.setName("testName1");
+        testWorkerPostDTO1.setLastName("testLastName1");
+
+        testWorkerDTO1.setId(11);
+        testWorkerDTO1.setName("testName1");
+        testWorkerDTO1.setLastName("testLastName1");
+
+        testWorkerDTO2.setId(12);
+        testWorkerDTO2.setName("testName2");
+        testWorkerDTO2.setLastName("testLastName2");
+    }
 
     @BeforeEach
     void setUp() {
@@ -45,7 +59,7 @@ class WorkersServiceTest {
 
     @Test
     void add() {
-        when(workersMapper.workerPostDtoToWorkerEntity(any(WorkerPostDTO.class))).thenReturn(testWorkerEntity1);
+        when(workersMapper.workerPostDtoToWorkerEntity(any(WorkerPostGeneratedDTO.class))).thenReturn(testWorkerEntity1);
         when(workerRepository.save(any(WorkerEntity.class))).thenReturn(testWorkerEntity1);
 
         workersService.add(testWorkerPostDTO1);
@@ -55,12 +69,12 @@ class WorkersServiceTest {
 
     @Test
     void getAll() {
-        List<WorkerDTO> testListDTO = new ArrayList<>();
+        Set<WorkerGeneratedDTO> testListDTO = new HashSet<>();
 
         testListDTO.add(testWorkerDTO1);
         testListDTO.add(testWorkerDTO2);
 
-        List<WorkerEntity> testListEntity = new ArrayList<>();
+        Set<WorkerEntity> testListEntity = new HashSet<>();
 
         testListEntity.add(testWorkerEntity1);
         testListEntity.add(testWorkerEntity2);

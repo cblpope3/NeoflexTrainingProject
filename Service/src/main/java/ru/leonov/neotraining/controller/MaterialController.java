@@ -1,19 +1,22 @@
 package ru.leonov.neotraining.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.leonov.neotraining.dto.material_dto.MaterialDTO;
-import ru.leonov.neotraining.dto.material_dto.MaterialPostDTO;
+import ru.leonov.neotraining.api.MaterialApi;
+import ru.leonov.neotraining.model.MaterialGeneratedDTO;
+import ru.leonov.neotraining.model.MaterialPostGeneratedDTO;
 import ru.leonov.neotraining.services.MaterialService;
 
+import java.util.Set;
+
 @Controller
+@Api(tags = {"Material"})
 @RequestMapping(value = "/material")
-@Api(tags = "Materials")
-public class MaterialController {
+public class MaterialController implements MaterialApi {
 
     @Autowired
     private MaterialService materialService;
@@ -21,39 +24,25 @@ public class MaterialController {
     //#########
     //   ADD
     //#########
-    @ApiOperation(value = "Add a new material.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Material added successfully."),
-            @ApiResponse(code = 400, message = "Parameters missing."),
-            @ApiResponse(code = 500, message = "Material not added.")
-    })
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<String> add(
-            @ApiParam(value = "New material as JSON object.", required = true) @RequestBody MaterialPostDTO material) {
-        if (material.isDataCorrect()) {
-            if (materialService.add(material)) {
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
+    public ResponseEntity<Void> addMaterial(@RequestBody MaterialPostGeneratedDTO material) {
+        if (material.getName() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else if (materialService.add(material)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     //#########
     // GET ALL
     //#########
-    @ApiOperation(value = "Get list of all materials.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns list of all materials as JSON object.", response = MaterialDTO[].class),
-            @ApiResponse(code = 204, message = "Returns empty list if no materials in database.")
-    })
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<Iterable<MaterialDTO>> getAll() {
-        Iterable<MaterialDTO> materialList = materialService.getAll();
+    public ResponseEntity<Set<MaterialGeneratedDTO>> getMaterialList() {
+        Set<MaterialGeneratedDTO> materialList = materialService.getAll();
         if (materialList.iterator().hasNext()) {
             return new ResponseEntity<>(materialList, HttpStatus.OK);
         } else {
@@ -65,16 +54,10 @@ public class MaterialController {
     //#########
     // GET ONE
     //#########
-    @ApiOperation(value = "Get specific material with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested material as JSON object.", response = MaterialDTO.class),
-            @ApiResponse(code = 404, message = "Requested material not found.")
-    })
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<MaterialDTO> getById(
-            @ApiParam(value = "Id of requested material.", required = true) @PathVariable int id) {
-        MaterialDTO material = materialService.getById(id);
+    public ResponseEntity<MaterialGeneratedDTO> getMaterialById(@PathVariable Integer id) {
+        MaterialGeneratedDTO material = materialService.getById(id);
         if (material != null) {
             return new ResponseEntity<>(material, HttpStatus.OK);
         } else {
@@ -85,16 +68,10 @@ public class MaterialController {
     //#########
     // UPDATE
     //#########
-    @ApiOperation(value = "Change name of material with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Requested material updated successfully."),
-            @ApiResponse(code = 404, message = "Requested material not found.")
-    })
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<String> updateById(
-            @ApiParam(value = "Id of requested material.", required = true) @PathVariable int id,
-            @ApiParam(value = "New name of material. Remains the same if empty.") @RequestParam(required = false) String name) {
+    public ResponseEntity<Void> updateMaterialById(@PathVariable Integer id,
+                                                   @RequestParam(required = false) String name) {
         if (materialService.updateById(id, name)) return new ResponseEntity<>(HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -102,14 +79,9 @@ public class MaterialController {
     //#########
     // DELETE
     //#########
-    @ApiOperation(value = "Delete material with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Requested material deleted successfully."),
-            @ApiResponse(code = 404, message = "Requested material not found.")
-    })
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<String> deleteById(@ApiParam(value = "Id of requested material.", required = true) @PathVariable int id) {
+    public ResponseEntity<Void> deleteMaterialById(@PathVariable Integer id) {
         if (materialService.deleteById(id)) return new ResponseEntity<>(HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

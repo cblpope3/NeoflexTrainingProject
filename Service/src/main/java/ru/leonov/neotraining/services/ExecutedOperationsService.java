@@ -3,15 +3,18 @@ package ru.leonov.neotraining.services;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsDTO;
-import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsPostDTO;
 import ru.leonov.neotraining.entities.ExecutedOperationsEntity;
 import ru.leonov.neotraining.entities.TechMapEntity;
 import ru.leonov.neotraining.mappers.ExecutedOperationsMapper;
+import ru.leonov.neotraining.model.ExecutedOperationGeneratedDTO;
+import ru.leonov.neotraining.model.ExecutedOperationPostGeneratedDTO;
 import ru.leonov.neotraining.repositories.ExecutedOperationsRepository;
 import ru.leonov.neotraining.repositories.MaterialRepository;
 import ru.leonov.neotraining.repositories.TechMapRepository;
 import ru.leonov.neotraining.repositories.WorkerRepository;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class ExecutedOperationsService {
@@ -60,7 +63,7 @@ public class ExecutedOperationsService {
      * '15' if material not match techMap,
      * '16' if techMap not saved properly.
      */
-    public int executeOperation(ExecutedOperationsPostDTO request) {
+    public int executeOperation(ExecutedOperationPostGeneratedDTO request) {
         int techMapId = request.getTechMapId();
         int workerId = request.getWorkerId();
         int materialId = request.getMaterialId();
@@ -101,11 +104,15 @@ public class ExecutedOperationsService {
         }
     }
 
-    public Iterable<ExecutedOperationsDTO> getAll() {
-        return executedOperationsMapper.executedOpsEntityToExecutedOpsDtoAll(executedOperationsRepository.findAllByOrderByIdDesc());
+    public Set<ExecutedOperationGeneratedDTO> getAll() {
+        return executedOperationsMapper.executedOpsEntityToExecutedOpsDtoAll(executedOperationsRepository.findAll());
     }
 
-    public ExecutedOperationsDTO getById(int id) {
+    public List<ExecutedOperationGeneratedDTO> getAllOrdered() {
+        return executedOperationsMapper.executedOpsEntityToExecutedOpsDtoAllOrdered(executedOperationsRepository.findAllByOrderByIdDesc());
+    }
+
+    public ExecutedOperationGeneratedDTO getById(int id) {
         if (executedOperationsRepository.existsById(id)) {
             return executedOperationsMapper.executedOpsEntityToExecutedOpsDto(executedOperationsRepository.findById(id));
         } else return null;

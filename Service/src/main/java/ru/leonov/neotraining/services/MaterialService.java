@@ -2,11 +2,13 @@ package ru.leonov.neotraining.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.leonov.neotraining.dto.material_dto.MaterialDTO;
-import ru.leonov.neotraining.dto.material_dto.MaterialPostDTO;
 import ru.leonov.neotraining.entities.MaterialEntity;
 import ru.leonov.neotraining.mappers.MaterialMapper;
+import ru.leonov.neotraining.model.MaterialGeneratedDTO;
+import ru.leonov.neotraining.model.MaterialPostGeneratedDTO;
 import ru.leonov.neotraining.repositories.MaterialRepository;
+
+import java.util.Set;
 
 @Service
 public class MaterialService {
@@ -21,16 +23,16 @@ public class MaterialService {
         this.materialRepository = materialRepository;
     }
 
-    public boolean add(MaterialPostDTO materialPostDTO) {
+    public boolean add(MaterialPostGeneratedDTO materialPostDTO) {
         MaterialEntity materialEntity = materialMapper.materialPostDtoToMaterialEntity(materialPostDTO);
         return (materialRepository.save(materialEntity)) == materialEntity;
     }
 
-    public Iterable<MaterialDTO> getAll() {
+    public Set<MaterialGeneratedDTO> getAll() {
         return materialMapper.materialsToMaterialsAllDto(materialRepository.findAll());
     }
 
-    public MaterialDTO getById(int id) {
+    public MaterialGeneratedDTO getById(int id) {
         if (materialRepository.existsById(id)) {
             return materialMapper.materialEntityToMaterialDto(materialRepository.findById(id));
         } else return null;

@@ -1,19 +1,20 @@
 package ru.leonov.neotraining.services;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.leonov.neotraining.dto.material_dto.MaterialDTO;
-import ru.leonov.neotraining.dto.material_dto.MaterialPostDTO;
 import ru.leonov.neotraining.entities.MaterialEntity;
 import ru.leonov.neotraining.mappers.MaterialMapperImpl;
+import ru.leonov.neotraining.model.MaterialGeneratedDTO;
+import ru.leonov.neotraining.model.MaterialPostGeneratedDTO;
 import ru.leonov.neotraining.repositories.MaterialRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,16 +22,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class MaterialServiceTest {
 
-    private final MaterialEntity testMaterialEntity1 = new MaterialEntity("testName1");
-    private final MaterialEntity testMaterialEntity2 = new MaterialEntity("testName2");
-    private final MaterialPostDTO testMaterialPostDTO1 = new MaterialPostDTO("testName1");
-    private final MaterialDTO testMaterialDTO1 = new MaterialDTO(11, "testName1");
-    private final MaterialDTO testMaterialDTO2 = new MaterialDTO(12, "testName2");
+    private static final MaterialEntity testMaterialEntity1 = new MaterialEntity("testName1");
+    private static final MaterialEntity testMaterialEntity2 = new MaterialEntity("testName2");
+    private static final MaterialPostGeneratedDTO testMaterialPostDTO1 = new MaterialPostGeneratedDTO();
+    private static final MaterialGeneratedDTO testMaterialDTO1 = new MaterialGeneratedDTO();
+    private static final MaterialGeneratedDTO testMaterialDTO2 = new MaterialGeneratedDTO();
     @MockBean
     MaterialRepository materialRepository;
     @MockBean
     MaterialMapperImpl materialMapper;
     MaterialService materialService;
+
+    @BeforeAll
+    static void setUpAll() {
+        testMaterialPostDTO1.setName("testName1");
+
+        testMaterialDTO1.setId(11);
+        testMaterialDTO1.setName("testName1");
+
+        testMaterialDTO2.setId(12);
+        testMaterialDTO2.setName("testName2");
+    }
 
     @BeforeEach
     void setUp() {
@@ -54,12 +66,12 @@ class MaterialServiceTest {
 
     @Test
     void getAll() {
-        List<MaterialDTO> testListDTO = new ArrayList<>();
+        Set<MaterialGeneratedDTO> testListDTO = new HashSet<>();
 
         testListDTO.add(testMaterialDTO1);
         testListDTO.add(testMaterialDTO2);
 
-        List<MaterialEntity> testListEntity = new ArrayList<>();
+        Set<MaterialEntity> testListEntity = new HashSet<>();
 
         testListEntity.add(testMaterialEntity1);
         testListEntity.add(testMaterialEntity2);
@@ -82,9 +94,9 @@ class MaterialServiceTest {
         when(materialRepository.existsById(wrongMaterialId)).thenReturn(false);
         when(materialMapper.materialEntityToMaterialDto(testMaterialEntity1)).thenReturn(testMaterialDTO1);
 
-        // test to find existing materialDTO
+        // test to find existing MaterialGeneratedDTO
         assertEquals(testMaterialDTO1, materialService.getById(materialId));
-        // test if materialDTO not exist
+        // test if MaterialGeneratedDTO not exist
         assertNull(materialService.getById(wrongMaterialId));
 
         verify(materialRepository, times(1)).findById(materialId);
@@ -102,9 +114,9 @@ class MaterialServiceTest {
         when(materialRepository.save(testMaterialEntity1)).thenReturn(testMaterialEntity1);
         when(materialRepository.save(testMaterialEntity2)).thenReturn(testMaterialEntity2);
 
-        // test to update existing materialDTO
+        // test to update existing MaterialGeneratedDTO
         assertTrue(materialService.updateById(materialId, newName));
-        // test if materialDTO not exist
+        // test if MaterialGeneratedDTO not exist
         assertFalse(materialService.updateById(wrongMaterialId, newName));
 
         verify(materialRepository, times(1)).save(testMaterialEntity1);
@@ -118,10 +130,10 @@ class MaterialServiceTest {
         when(materialRepository.existsById(materialId)).thenReturn(true);
         when(materialRepository.existsById(wrongMaterialId)).thenReturn(false);
 
-        // test to update existing materialDTO
+        // test to update existing MaterialGeneratedDTO
         assertTrue(materialService.deleteById(materialId));
 
-        // test if materialDTO not exist
+        // test if MaterialGeneratedDTO not exist
         assertFalse(materialService.deleteById(wrongMaterialId));
 
         verify(materialRepository, times(1)).deleteById(materialId);

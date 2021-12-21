@@ -11,7 +11,6 @@
     <name>NeoflexTrainingProject</name>
     <description>Neoflex training project. By Leonov Nickolay.</description>
     <properties>
-<!--        <project.version>0.0.1</project.version>-->
         <java.version>17</java.version>
         <openapi-generator-maven-plugin.version>5.1.0</openapi-generator-maven-plugin.version>
         <maven.compiler.source>11</maven.compiler.source>
@@ -19,6 +18,7 @@
         <spring.version>2.5.6</spring.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <swagger.version>2.9.2</swagger.version>
+        <jackson.version>2.13.0</jackson.version>
     </properties>
 
     <dependencies>

@@ -3,8 +3,8 @@ package ru.leonov.neotraining;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsPostDTO;
-import ru.leonov.neotraining.dto.tech_map_dto.TechMapDTO;
+import ru.leonov.neotraining.model.ExecutedOperationPostGeneratedDTO;
+import ru.leonov.neotraining.model.TechMapGeneratedDTO;
 import ru.leonov.neotraining.services.ExecutedOperationsService;
 import ru.leonov.neotraining.services.TechMapService;
 
@@ -21,12 +21,11 @@ public class RandomOperationsExecutor {
     @Autowired
     TechMapService techMapService;
 
-    @Scheduled(cron = "0 */10 10-11 * * *", zone = "Europe/Moscow")
+    @Scheduled(cron = "0 */5 19-20 * * *", zone = "Europe/Moscow")
     public void executeOperation() {
 
         //getting list of all tech maps
-        List<TechMapDTO> techMapList = new ArrayList<>();
-        techMapService.getAll().forEach(techMapList::add);
+        List<TechMapGeneratedDTO> techMapList = new ArrayList<>(techMapService.getAll());
 
         //generating list of random techMaps
         List<Integer> randomIndexList = new ArrayList<>();
@@ -38,14 +37,14 @@ public class RandomOperationsExecutor {
         for (int randomIndex : randomIndexList) {
 
             //getting techMap from list
-            TechMapDTO techMap = techMapList.get(randomIndex);
+            TechMapGeneratedDTO techMap = techMapList.get(randomIndex);
 
             //getting technical map, worker and material id
             int techMapId = techMap.getId();
             int workerId = techMap.getWorker().getId();
             int materialId = techMap.getMaterial().getId();
 
-            ExecutedOperationsPostDTO newOperation = new ExecutedOperationsPostDTO();
+            ExecutedOperationPostGeneratedDTO newOperation = new ExecutedOperationPostGeneratedDTO();
             newOperation.setTechMapId(techMapId);
             newOperation.setWorkerId(workerId);
             newOperation.setMaterialId(materialId);

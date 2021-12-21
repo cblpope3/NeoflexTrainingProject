@@ -6,11 +6,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.leonov.neotraining.dto.material_dto.MaterialDTO;
+import ru.leonov.neotraining.model.MaterialGeneratedDTO;
 import ru.leonov.neotraining.services.MaterialService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -49,7 +49,7 @@ class MaterialControllerTest {
 
     @Test
     void getAll() throws Exception {
-        List<MaterialDTO> materialDTOS = new ArrayList<>();
+        Set<MaterialGeneratedDTO> materialDTOS = new HashSet<>();
 
         // check 204 response
         when(materialService.getAll()).thenReturn(materialDTOS);
@@ -58,8 +58,17 @@ class MaterialControllerTest {
                 .andExpect(status().is(204));
 
         // check 200 response
-        materialDTOS.add(new MaterialDTO(1323, "TestName1"));
-        materialDTOS.add(new MaterialDTO(124, "TestName2"));
+        MaterialGeneratedDTO material1 = new MaterialGeneratedDTO();
+        MaterialGeneratedDTO material2 = new MaterialGeneratedDTO();
+
+        material1.setId(1323);
+        material1.setName("TestName1");
+
+        material2.setId(124);
+        material2.setName("TestName2");
+
+        materialDTOS.add(material1);
+        materialDTOS.add(material2);
         when(materialService.getAll()).thenReturn(materialDTOS);
         this.mockMvc.perform(get("/material"))
                 .andDo(print())
@@ -70,7 +79,10 @@ class MaterialControllerTest {
 
     @Test
     void getById() throws Exception {
-        MaterialDTO materialDTO = new MaterialDTO(10, "TestName");
+        MaterialGeneratedDTO materialDTO = new MaterialGeneratedDTO();
+        materialDTO.setId(10);
+        materialDTO.setName("TestName");
+
         when(materialService.getById(10)).thenReturn(materialDTO);
 
         // check 200 response

@@ -1,18 +1,19 @@
 package ru.leonov.neotraining.controller;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.leonov.neotraining.dto.material_dto.MaterialDTO;
-import ru.leonov.neotraining.dto.tech_map_dto.TechMapDTO;
-import ru.leonov.neotraining.dto.workers_dto.WorkerDTO;
+import ru.leonov.neotraining.model.MaterialGeneratedDTO;
+import ru.leonov.neotraining.model.TechMapGeneratedDTO;
+import ru.leonov.neotraining.model.WorkerGeneratedDTO;
 import ru.leonov.neotraining.services.TechMapService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -24,18 +25,43 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TechMapController.class)
 class TechMapControllerTest {
 
-    private final WorkerDTO exampleWorker1 = new WorkerDTO(10, "Name1", "LastName1");
-    private final WorkerDTO exampleWorker2 = new WorkerDTO(11, "Name2", "LastName2");
-    private final MaterialDTO exampleMaterial1 = new MaterialDTO(20, "mat1");
-    private final MaterialDTO exampleMaterial2 = new MaterialDTO(21, "mat2");
-    private final TechMapDTO exampleTechMap1 = new TechMapDTO(30, exampleWorker1, exampleMaterial1);
-    private final TechMapDTO exampleTechMap2 = new TechMapDTO(31, exampleWorker2, exampleMaterial2);
+    private static final WorkerGeneratedDTO exampleWorker1 = new WorkerGeneratedDTO();
+    private static final WorkerGeneratedDTO exampleWorker2 = new WorkerGeneratedDTO();
+    private static final MaterialGeneratedDTO exampleMaterial1 = new MaterialGeneratedDTO();
+    private static final MaterialGeneratedDTO exampleMaterial2 = new MaterialGeneratedDTO();
+    private static final TechMapGeneratedDTO exampleTechMap1 = new TechMapGeneratedDTO();
+    private static final TechMapGeneratedDTO exampleTechMap2 = new TechMapGeneratedDTO();
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private TechMapService techMapService;
+
+    @BeforeAll
+    static void setUpAll() {
+        exampleWorker1.setId(10);
+        exampleWorker1.setName("Name1");
+        exampleWorker1.setLastName("LastName1");
+
+        exampleWorker2.setId(11);
+        exampleWorker2.setName("Name2");
+        exampleWorker2.setLastName("LastName2");
+
+        exampleMaterial1.setId(20);
+        exampleMaterial1.setName("mat1");
+
+        exampleMaterial2.setId(21);
+        exampleMaterial2.setName("mat2");
+
+        exampleTechMap1.setId(30);
+        exampleTechMap1.setWorker(exampleWorker1);
+        exampleTechMap1.setMaterial(exampleMaterial1);
+
+        exampleTechMap2.setId(31);
+        exampleTechMap2.setWorker(exampleWorker2);
+        exampleTechMap2.setMaterial(exampleMaterial2);
+    }
 
     @Test
     void add() throws Exception {
@@ -79,7 +105,7 @@ class TechMapControllerTest {
 
     @Test
     void getAll() throws Exception {
-        List<TechMapDTO> techMapDTOS = new ArrayList<>();
+        Set<TechMapGeneratedDTO> techMapDTOS = new HashSet<>();
 
         // check 204 response
         when(techMapService.getAll()).thenReturn(techMapDTOS);
@@ -94,20 +120,23 @@ class TechMapControllerTest {
         this.mockMvc.perform(get("/tech_map"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json("[" + techMapDTOS.get(0).toJSON() + "," + techMapDTOS.get(1).toJSON() +
-                        "]"));
+                .andExpect(content().json(
+                        "[{\"id\":30,\"material\":{\"id\":20,\"name\":\"mat1\"}," +
+                                "\"worker\":{\"id\":10,\"name\":\"Name1\",\"lastName\":\"LastName1\"}}," +
+                                "{\"id\":31,\"material\":{\"id\":21,\"name\":\"mat2\"}," +
+                                "\"worker\":{\"id\":11,\"name\":\"Name2\",\"lastName\":\"LastName2\"}}]"));
     }
 
     @Test
     void getById() throws Exception {
-
         when(techMapService.getById(exampleTechMap1.getId())).thenReturn(exampleTechMap1);
 
         // check 200 response
         this.mockMvc.perform(get("/tech_map/" + exampleTechMap1.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(exampleTechMap1.toJSON()));
+                .andExpect(content().json("{\"id\":30,\"material\":{\"id\":20,\"name\":\"mat1\"}," +
+                        "\"worker\":{\"id\":10,\"name\":\"Name1\",\"lastName\":\"LastName1\"}}"));
 
         // check 404 response
         this.mockMvc.perform(get("/tech_map/11"))
@@ -118,17 +147,17 @@ class TechMapControllerTest {
     @Test
     void updateById() throws Exception {
 
-        when(techMapService.updateById(100, "120", "130")).
+        when(techMapService.updateById(100, 120, 130)).
                 thenReturn(TechMapService.STATUS_OK);
-        when(techMapService.updateById(100, null, "130")).
+        when(techMapService.updateById(100, null, 130)).
                 thenReturn(TechMapService.STATUS_OK);
-        when(techMapService.updateById(100, "120", null)).
+        when(techMapService.updateById(100, 120, null)).
                 thenReturn(TechMapService.STATUS_OK);
-        when(techMapService.updateById(101, "120", "130")).
+        when(techMapService.updateById(101, 120, 130)).
                 thenReturn(TechMapService.NO_TECH_MAP);
-        when(techMapService.updateById(100, "121", "130")).
+        when(techMapService.updateById(100, 121, 130)).
                 thenReturn(TechMapService.NO_WORKER);
-        when(techMapService.updateById(100, "120", "131")).
+        when(techMapService.updateById(100, 120, 131)).
                 thenReturn(TechMapService.NO_MATERIAL);
 
         // check 200 response

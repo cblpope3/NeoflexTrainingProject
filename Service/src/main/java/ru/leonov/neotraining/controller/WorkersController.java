@@ -1,19 +1,22 @@
 package ru.leonov.neotraining.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.leonov.neotraining.dto.workers_dto.WorkerDTO;
-import ru.leonov.neotraining.dto.workers_dto.WorkerPostDTO;
+import ru.leonov.neotraining.api.WorkerApi;
+import ru.leonov.neotraining.model.WorkerGeneratedDTO;
+import ru.leonov.neotraining.model.WorkerPostGeneratedDTO;
 import ru.leonov.neotraining.services.WorkersService;
 
+import java.util.Set;
+
 @Controller
+@Api(tags = {"Worker"})
 @RequestMapping(value = "/worker")
-@Api(tags = "Workers")
-public class WorkersController {
+public class WorkersController implements WorkerApi {
 
     @Autowired
     private WorkersService workersService;
@@ -21,39 +24,25 @@ public class WorkersController {
     //#######
     //  ADD
     //#######
-    @ApiOperation(value = "Add a new worker.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Worker added successfully."),
-            @ApiResponse(code = 400, message = "Parameters missing."),
-            @ApiResponse(code = 500, message = "Worker not added.")
-    })
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<String> add(
-            @ApiParam(value = "New worker as JSON object.", required = true) @RequestBody WorkerPostDTO worker) {
-        if (worker.isDataCorrect()) {
-            if (workersService.add(worker)) {
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
+    public ResponseEntity<Void> addWorker(@RequestBody WorkerPostGeneratedDTO worker) {
+        if (worker.getName() == null || worker.getLastName() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else if (workersService.add(worker)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     //#########
     // GET ALL
     //#########
-    @ApiOperation(value = "Get list of all workers.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns list of all workers as JSON object.", response = WorkerDTO[].class),
-            @ApiResponse(code = 204, message = "Returns empty list if no workers in database.")
-    })
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<Iterable<WorkerDTO>> getAll() {
-        Iterable<WorkerDTO> workersList = workersService.getAll();
+    public ResponseEntity<Set<WorkerGeneratedDTO>> getWorkersList() {
+        Set<WorkerGeneratedDTO> workersList = workersService.getAll();
         if (workersList.iterator().hasNext()) {
             return new ResponseEntity<>(workersList, HttpStatus.OK);
         } else {
@@ -65,16 +54,10 @@ public class WorkersController {
     //#########
     // GET ONE
     //#########
-    @ApiOperation(value = "Get specific worker with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns requested worker as JSON object.", response = WorkerDTO.class),
-            @ApiResponse(code = 404, message = "Requested worker not found.")
-    })
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<WorkerDTO> getById(@ApiParam(value = "Id of requested worker.", required = true)
-                                             @PathVariable int id) {
-        WorkerDTO worker = workersService.getById(id);
+    public ResponseEntity<WorkerGeneratedDTO> getWorkerById(@PathVariable Integer id) {
+        WorkerGeneratedDTO worker = workersService.getById(id);
         if (worker != null) {
             return new ResponseEntity<>(worker, HttpStatus.OK);
         } else {
@@ -85,20 +68,11 @@ public class WorkersController {
     //#########
     //  UPDATE
     //#########
-    @ApiOperation(value = "Change name and last name of worker with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Requested worker updated successfully."),
-            @ApiResponse(code = 404, message = "Requested worker not found.")
-    })
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<String> updateById(
-            @ApiParam(value = "Id of requested worker.", required = true)
-            @PathVariable int id,
-            @ApiParam(value = "New name of worker. Remains the same if empty.")
-            @RequestParam(required = false) String name,
-            @ApiParam(value = "New last name of worker. Remains the same if empty.")
-            @RequestParam(required = false) String lastName) {
+    public ResponseEntity<Void> updateWorkerById(@PathVariable Integer id,
+                                                 @RequestParam(required = false) String name,
+                                                 @RequestParam(required = false) String lastName) {
         if (workersService.updateById(id, name, lastName)) return new ResponseEntity<>(HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -106,14 +80,9 @@ public class WorkersController {
     //#########
     // DELETE
     //#########
-    @ApiOperation(value = "Delete worker with id={id}.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Requested worker deleted successfully."),
-            @ApiResponse(code = 404, message = "Requested worker not found.")
-    })
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<String> deleteById(@ApiParam(value = "Id of requested worker.", required = true) @PathVariable int id) {
+    public ResponseEntity<Void> deleteWorkerById(@PathVariable Integer id) {
         if (workersService.deleteById(id)) return new ResponseEntity<>(HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

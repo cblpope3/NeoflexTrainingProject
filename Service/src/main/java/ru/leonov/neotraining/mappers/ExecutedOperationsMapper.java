@@ -1,13 +1,18 @@
 package ru.leonov.neotraining.mappers;
 
 import org.mapstruct.Mapper;
-import ru.leonov.neotraining.dto.executed_operations_dto.ExecutedOperationsDTO;
 import ru.leonov.neotraining.entities.ExecutedOperationsEntity;
+import ru.leonov.neotraining.model.ExecutedOperationGeneratedDTO;
+
+import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface ExecutedOperationsMapper {
 
-    ExecutedOperationsDTO executedOpsEntityToExecutedOpsDto(ExecutedOperationsEntity executedOperation);
+    ExecutedOperationGeneratedDTO executedOpsEntityToExecutedOpsDto(ExecutedOperationsEntity executedOperation);
 
-    Iterable<ExecutedOperationsDTO> executedOpsEntityToExecutedOpsDtoAll(Iterable<ExecutedOperationsEntity> techMaps);
+    Set<ExecutedOperationGeneratedDTO> executedOpsEntityToExecutedOpsDtoAll(Set<ExecutedOperationsEntity> techMaps);
+
+    List<ExecutedOperationGeneratedDTO> executedOpsEntityToExecutedOpsDtoAllOrdered(List<ExecutedOperationsEntity> techMaps);
 }

@@ -1,13 +1,15 @@
 package ru.leonov.neotraining.mappers;
 
 import org.mapstruct.Mapper;
-import ru.leonov.neotraining.dto.tech_map_dto.TechMapDTO;
 import ru.leonov.neotraining.entities.TechMapEntity;
+import ru.leonov.neotraining.model.TechMapGeneratedDTO;
+
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface TechMapMapper {
 
-    TechMapDTO techMapEntityToTechMapDto(TechMapEntity techMap);
+    TechMapGeneratedDTO techMapEntityToTechMapDto(TechMapEntity techMap);
 
-    Iterable<TechMapDTO> techMapsToTechMapsAllDto(Iterable<TechMapEntity> techMaps);
+    Set<TechMapGeneratedDTO> techMapsToTechMapsAllDto(Set<TechMapEntity> techMaps);
 }

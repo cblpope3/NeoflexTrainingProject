@@ -6,12 +6,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.leonov.neotraining.controller.WorkersController;
-import ru.leonov.neotraining.dto.workers_dto.WorkerDTO;
+import ru.leonov.neotraining.model.WorkerGeneratedDTO;
 import ru.leonov.neotraining.services.WorkersService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -55,7 +54,7 @@ class WorkersControllerTest {
 
     @Test
     void getAll() throws Exception {
-        List<WorkerDTO> workerDTOS = new ArrayList<>();
+        Set<WorkerGeneratedDTO> workerDTOS = new HashSet<>();
 
         // check 204 response
         when(workersService.getAll()).thenReturn(workerDTOS);
@@ -64,8 +63,19 @@ class WorkersControllerTest {
                 .andExpect(status().is(204));
 
         // check 200 response
-        workerDTOS.add(new WorkerDTO(1323, "TestName1", "TestLastName1"));
-        workerDTOS.add(new WorkerDTO(124, "TestName2", "TestLastName2"));
+        WorkerGeneratedDTO workerGeneratedDTO1 = new WorkerGeneratedDTO();
+        WorkerGeneratedDTO workerGeneratedDTO2 = new WorkerGeneratedDTO();
+
+        workerGeneratedDTO1.setId(1323);
+        workerGeneratedDTO1.setName("TestName1");
+        workerGeneratedDTO1.setLastName("TestLastName1");
+
+        workerGeneratedDTO2.setId(124);
+        workerGeneratedDTO2.setName("TestName2");
+        workerGeneratedDTO2.setLastName("TestLastName2");
+
+        workerDTOS.add(workerGeneratedDTO1);
+        workerDTOS.add(workerGeneratedDTO2);
         when(workersService.getAll()).thenReturn(workerDTOS);
         this.mockMvc.perform(get("/worker"))
                 .andDo(print())
@@ -76,8 +86,10 @@ class WorkersControllerTest {
 
     @Test
     void getById() throws Exception {
-
-        WorkerDTO workerDTO = new WorkerDTO(10, "TestName", "TestLastName");
+        WorkerGeneratedDTO workerDTO = new WorkerGeneratedDTO();
+        workerDTO.setId(10);
+        workerDTO.setName("TestName");
+        workerDTO.setLastName("TestLastName");
         when(workersService.getById(10)).thenReturn(workerDTO);
 
         // check 200 response
