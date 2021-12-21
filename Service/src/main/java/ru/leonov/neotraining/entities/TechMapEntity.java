@@ -1,9 +1,18 @@
 package ru.leonov.neotraining.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "technical_maps")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class TechMapEntity {
 
     @Id
@@ -19,41 +28,8 @@ public class TechMapEntity {
     @JoinColumn(name = "material_id")
     private MaterialEntity material;
 
-    public TechMapEntity() {
-    }
-
     public TechMapEntity(WorkerEntity worker, MaterialEntity material) {
         this.worker = worker;
-        this.material = material;
-    }
-
-    public TechMapEntity(int id, WorkerEntity worker, MaterialEntity material) {
-        this.id = id;
-        this.worker = worker;
-        this.material = material;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public WorkerEntity getWorker() {
-        return worker;
-    }
-
-    public void setWorker(WorkerEntity worker) {
-        this.worker = worker;
-    }
-
-    public MaterialEntity getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(MaterialEntity material) {
         this.material = material;
     }
 

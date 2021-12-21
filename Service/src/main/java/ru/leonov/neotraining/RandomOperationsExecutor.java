@@ -21,7 +21,7 @@ public class RandomOperationsExecutor {
     @Autowired
     TechMapService techMapService;
 
-    @Scheduled(cron = "0 */5 19-20 * * *", zone = "Europe/Moscow")
+    @Scheduled(cron = "0 */10 10-11 * * *", zone = "Europe/Moscow")
     public void executeOperation() {
 
         //getting list of all tech maps
