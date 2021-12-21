@@ -1,0 +1,544 @@
+openapi: 3.0.0
+info:
+  title: new_api
+  version: '1.0'
+  description: Neoflex training project API.
+  contact:
+    name: Nickolay Leonov
+    email: leonov.n.ip@gmail.com
+servers:
+  - url: 'http://localhost:8080'
+tags:
+  - name: Worker
+    description: CRUD actions with workers
+  - name: Material
+    description: CRUD actions with materials
+  - name: Technical Map
+    description: CRUD actions with technical maps
+  - name: Executed operations
+    description: actions with executed operations
+paths:
+  /worker:
+    post:
+      summary: Create new worker
+      operationId: add-worker
+      tags:
+        - Worker
+      responses:
+        '200':
+          description: Worker added successfully.
+        '500':
+          description: Worker not added.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerPost'
+            examples:
+              Create worker Bob Fellow:
+                value:
+                  name: Bob
+                  lastName: Fellow
+        description: Post the necessary fields for the API to create a new worker.
+      description: Create a new worker.
+      parameters: []
+    get:
+      summary: Get workers list
+      operationId: get-workers-list
+      tags:
+        - Worker
+      responses:
+        '200':
+          description: Returns list of all workers as JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      lastName: string
+                      name: string
+                items:
+                  $ref: '#/components/schemas/Worker'
+              examples:
+                Example output:
+                  value:
+                    - id: 10
+                      lastName: Savelyev
+                      name: Egor
+                    - id: 11
+                      lastName: Ismailov
+                      name: Artem
+        '204':
+          description: Returns empty list if no workers in database.
+      description: Get list of all workers.
+  '/worker/{workerId}':
+    parameters:
+      - schema:
+          type: integer
+        name: workerId
+        in: path
+        required: true
+        description: Requested worker Id
+    get:
+      summary: Get worker by ID
+      tags:
+        - Worker
+      responses:
+        '200':
+          description: Returns requested worker as JSON object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        '404':
+          description: Requested worker not found.
+      operationId: get-worker-by-id
+      description: Get worker with specified id.
+      parameters: []
+    put:
+      summary: Change worker parameters
+      operationId: update-worker-by-id
+      tags:
+        - Worker
+      responses:
+        '200':
+          description: Requested worker updated successfully.
+        '404':
+          description: Requested worker not found.
+      description: 'Change name and last name of worker with id={id}.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: New name of worker. Remains the same if empty.
+        - schema:
+            type: string
+          in: query
+          name: lastName
+          description: New last name of worker. Remains the same if empty.
+    delete:
+      summary: Delete worker
+      operationId: delete-worker-by-id
+      tags:
+        - Worker
+      responses:
+        '200':
+          description: Requested worker deleted successfully.
+        '404':
+          description: Requested worker not found.
+      description: 'Delete worker with id={id}.'
+      parameters: []
+  /material:
+    get:
+      summary: Get materials list
+      tags:
+        - Material
+      responses:
+        '200':
+          description: Returns list of all materials as JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/Material'
+              examples:
+                Example material.:
+                  value:
+                    - id: 121
+                      name: Steel
+        '204':
+          description: Returns empty list if no materials in database.
+      operationId: get-material-list
+      description: Get list of all materials.
+      parameters: []
+    post:
+      summary: Create new material
+      operationId: add-material
+      tags:
+        - Material
+      responses:
+        '200':
+          description: Material added successfully.
+        '500':
+          description: Material not added.
+      description: Create a new material.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialPost'
+            examples:
+              Material post example.:
+                value:
+                  name: Steel
+        description: New material as JSON object.
+  '/material/{materialId}':
+    parameters:
+      - schema:
+          type: integer
+        name: materialId
+        in: path
+        required: true
+        description: Id of requested material.
+    get:
+      summary: Get material by ID
+      tags:
+        - Material
+      responses:
+        '200':
+          description: Returns requested material as JSON object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Material'
+        '404':
+          description: Requested material not found.
+      operationId: get-material-by-id
+      parameters: []
+      description: 'Get specific material with id={id}.'
+    put:
+      summary: Change material parameters
+      operationId: update-material-by-id
+      tags:
+        - Material
+      responses:
+        '200':
+          description: Requested material updated successfully.
+        '404':
+          description: Requested material not found.
+      description: 'Change name of material with id={id}.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: New name of material. Remains the same if empty.
+    delete:
+      summary: Delete material by ID
+      operationId: delete-material-by-id
+      tags:
+        - Material
+      responses:
+        '200':
+          description: Requested material deleted successfully.
+        '404':
+          description: Requested material not found.
+      description: 'Delete material with id={id}.'
+  /tech_map:
+    get:
+      summary: Get technical maps list
+      tags:
+        - Technical Map
+      responses:
+        '200':
+          description: Returns list of all technical maps as JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/TechMap'
+        '204':
+          description: Returns empty list if no technical maps in database.
+      operationId: get-tech_map-list
+      description: Get list of all technical maps.
+    post:
+      summary: Create new technical map
+      operationId: add-tech_map
+      tags:
+        - Technical Map
+      responses:
+        '200':
+          description: Technical map added successfully.
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties: {}
+        '404':
+          description: Worker or material not found in database. Read message in response body.
+        '500':
+          description: Internal server error.
+      description: Add a new technical map.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechMapPost'
+        description: New technical map as JSON object.
+  '/tech_map/{techMapId}':
+    parameters:
+      - schema:
+          type: integer
+        name: techMapId
+        in: path
+        required: true
+        description: Id of requested technical map.
+    get:
+      summary: Get technical map by ID
+      tags:
+        - Technical Map
+      responses:
+        '200':
+          description: Returns requested technical map as JSON object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechMap'
+        '404':
+          description: Requested technical map not found.
+      operationId: get-tech_map-by-id
+      description: 'Get specific technical map with id={id}.'
+    put:
+      summary: Change technical map parameters
+      operationId: update-tech_map-by-id
+      tags:
+        - Technical Map
+      responses:
+        '200':
+          description: Requested technical map updated successfully.
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties: {}
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '404':
+          description: Several parameters not found in database. Read message in response body.
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                Not found example:
+                  value: New worker not found in database.
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '500':
+          description: Internal Server Error
+      description: 'Change existing technical map with id={id}.'
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: workerId
+          description: New id of worker associated with technical map. Remains the same if empty.
+        - schema:
+            type: integer
+          in: query
+          name: materialId
+          description: New id of material associated with technical map. Remains the same if empty.
+    delete:
+      summary: Delete technical map by ID
+      operationId: delete-tech_map-by-id
+      tags:
+        - Technical Map
+      responses:
+        '200':
+          description: Requested technical map deleted successfully.
+        '404':
+          description: Requested technical map not found.
+      description: 'Delete technical map with id={id}.'
+  /operations:
+    get:
+      summary: Get list of executed operations
+      tags:
+        - Executed operations
+      responses:
+        '200':
+          description: Returns list of all executed operations as JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/ExecutedOperation'
+        '204':
+          description: Returns empty list if no executed operations in database.
+      operationId: get-operations-list
+      description: Get list of all executed operations.
+components:
+  schemas:
+    Worker:
+      description: Model that represents worker.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          lastName: string
+          name: string
+      title: Worker model
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+      required:
+        - id
+        - name
+        - lastName
+    WorkerPost:
+      description: Model that represents worker post request.
+      type: object
+      x-examples:
+        example-1:
+          id: 120
+          name: Ivan
+          lastName: Petrov
+      properties:
+        name:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+      required:
+        - name
+        - lastName
+      title: Worker post model
+    Material:
+      description: Model that represents material.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          name: string
+      title: Material model
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+      required:
+        - id
+        - name
+    MaterialPost:
+      description: Model that represents material post request.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          name: string
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required:
+        - name
+      title: Material post model
+    TechMap:
+      description: Model that represents technical map.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          material:
+            id: 0
+            name: string
+          worker:
+            id: 0
+            lastName: string
+            name: string
+      title: Technical map model
+      properties:
+        id:
+          type: integer
+        material:
+          $ref: '#/components/schemas/Material'
+        worker:
+          $ref: '#/components/schemas/Worker'
+      required:
+        - id
+        - material
+        - worker
+    TechMapPost:
+      description: Model that represents technical map post request.
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          material:
+            id: 0
+            name: string
+          worker:
+            id: 0
+            lastName: string
+            name: string
+      title: Technical map post model
+      properties:
+        material:
+          type: integer
+        worker:
+          type: integer
+      required:
+        - material
+        - worker
+    ExecutedOperation:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          id: 34
+          techMap:
+            id: 0
+            material:
+              id: 0
+              name: string
+            worker:
+              id: 0
+              lastName: string
+              name: string
+          date: '2020-05-06'
+      properties:
+        id:
+          type: integer
+        techMap:
+          $ref: '#/components/schemas/TechMap'
+        date:
+          type: string
+          minLength: 1
+      required:
+        - id
+        - techMap
+        - date
+    ExecutedOperationPost:
+      title: ExecutedOperationPost
+      type: object
+      properties:
+        techMapId:
+          type: integer
+        workerId:
+          type: integer
+        materialId:
+          type: integer
+      description: Model that represents post request to execute technical operation.
+      x-examples:
+        example-1:
+          techMapId: 10
+          workerId: 20
+          materialId: 30
+  responses: {}
+  requestBodies: {}
+  securitySchemes: {}
+  parameters: {}
+  examples: {}
+security: []
