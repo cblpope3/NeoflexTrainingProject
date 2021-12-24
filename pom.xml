@@ -20,6 +20,9 @@
         <swagger.version>2.9.2</swagger.version>
         <jackson.version>2.13.0</jackson.version>
         <lombok.version>1.18.20</lombok.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencies>
