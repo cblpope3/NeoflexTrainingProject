@@ -121,7 +121,12 @@ class TechMapServiceTest {
         when(materialRepository.existsById(any())).thenReturn(false);
         assertEquals(TechMapService.NO_MATERIAL, techMapService.add(testTechMapPostDTO1));
 
-        verify(techMapRepository, times(1)).save(any(TechMapEntity.class));
+        // testing NOT_SAVED status
+        when(materialRepository.existsById(any())).thenReturn(true);
+        when(techMapRepository.save(any(TechMapEntity.class))).thenReturn(testTechMapEntity2);
+        assertEquals(TechMapService.NOT_SAVED, techMapService.add(testTechMapPostDTO1));
+
+        verify(techMapRepository, times(2)).save(any(TechMapEntity.class));
     }
 
     @Test
@@ -204,7 +209,13 @@ class TechMapServiceTest {
         assertEquals(TechMapService.NO_MATERIAL,
                 techMapService.updateById(techMapId, newWorker, wrongNewMaterial));
 
-        verify(techMapRepository, times(3)).save(any(TechMapEntity.class));
+        // testing NOT_SAVED status
+        when(materialRepository.existsById(any())).thenReturn(true);
+        when(workerRepository.existsById(any())).thenReturn(true);
+        when(techMapRepository.save(any(TechMapEntity.class))).thenReturn(testTechMapEntity2);
+        assertEquals(TechMapService.NOT_SAVED, techMapService.updateById(techMapId, newWorker, newMaterial));
+
+        verify(techMapRepository, times(4)).save(any(TechMapEntity.class));
     }
 
     @Test

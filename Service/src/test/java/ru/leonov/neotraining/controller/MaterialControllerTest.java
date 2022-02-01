@@ -45,6 +45,15 @@ class MaterialControllerTest {
                         .content("{}"))
                 .andDo(print())
                 .andExpect(status().is(400));
+
+        // check 500 response
+        when(materialService.add(any())).thenReturn(false);
+
+        this.mockMvc.perform(post("/material")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"TestName\"}"))
+                .andDo(print())
+                .andExpect(status().is(500));
     }
 
     @Test

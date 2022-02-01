@@ -92,7 +92,7 @@ class TechMapControllerTest {
                 .andExpect(status().is(404))
                 .andExpect(content().string("Material not found in database."));
 
-        // check 500 response
+        // check 500 response NOT SAVED
         when(techMapService.add(any())).thenReturn(TechMapService.NOT_SAVED);
         this.mockMvc.perform(post("/tech_map")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -101,6 +101,14 @@ class TechMapControllerTest {
                 .andExpect(status().is(500))
                 .andExpect(content().string("Technical map not saved."));
 
+        // check 500 response UNKNOWN
+        when(techMapService.add(any())).thenReturn(111);
+        this.mockMvc.perform(post("/tech_map")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"worker_id\": \"1\", \"material_id\": \"2\"}"))
+                .andDo(print())
+                .andExpect(status().is(500))
+                .andExpect(content().string("Unknown error."));
     }
 
     @Test
@@ -159,6 +167,10 @@ class TechMapControllerTest {
                 thenReturn(TechMapService.NO_WORKER);
         when(techMapService.updateById(100, 120, 131)).
                 thenReturn(TechMapService.NO_MATERIAL);
+        when(techMapService.updateById(200, 200, 200)).
+                thenReturn(TechMapService.NOT_SAVED);
+        when(techMapService.updateById(300, 300, 300)).
+                thenReturn(444);
 
         // check 200 response
         this.mockMvc.perform(put("/tech_map/100")
@@ -200,6 +212,22 @@ class TechMapControllerTest {
                 .andDo(print())
                 .andExpect(status().is(404))
                 .andExpect(content().string("New material not found in database."));
+
+        // check 500 response "Not saved"
+        this.mockMvc.perform(put("/tech_map/200")
+                        .param("workerId", "200")
+                        .param("materialId", "200"))
+                .andDo(print())
+                .andExpect(status().is(500))
+                .andExpect(content().string("Technical map has not saved."));
+
+        // check 500 response "Unknown error"
+        this.mockMvc.perform(put("/tech_map/300")
+                        .param("workerId", "300")
+                        .param("materialId", "300"))
+                .andDo(print())
+                .andExpect(status().is(500))
+                .andExpect(content().string("Unknown error."));
     }
 
     @Test
