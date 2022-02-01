@@ -142,6 +142,10 @@ class ExecutedOperationsServiceTest {
         // testing OK status
         assertEquals(ExecutedOperationsService.STATUS_OK, executedOperationsService.executeOperation(testOperationPost));
 
+        // testing NOT_SAVED status
+        when(executedOperationsRepository.save(any(ExecutedOperationsEntity.class))).thenReturn(testExecutedOperationsEntity2);
+        assertEquals(ExecutedOperationsService.NOT_SAVED, executedOperationsService.executeOperation(testOperationPost));
+
         // testing NO_MATERIAL status
         testOperationPost.setMaterialId(wrongMaterialId);
         assertEquals(ExecutedOperationsService.NO_MATERIAL, executedOperationsService.executeOperation(testOperationPost));
@@ -168,7 +172,7 @@ class ExecutedOperationsServiceTest {
         testOperationPost.setWorkerId(testWorkerEntity2.getId());
         assertEquals(ExecutedOperationsService.MATERIAL_NOT_MATCH, executedOperationsService.executeOperation(testOperationPost));
 
-        verify(executedOperationsRepository, times(1)).save(any(ExecutedOperationsEntity.class));
+        verify(executedOperationsRepository, times(2)).save(any(ExecutedOperationsEntity.class));
     }
 
     @Test
