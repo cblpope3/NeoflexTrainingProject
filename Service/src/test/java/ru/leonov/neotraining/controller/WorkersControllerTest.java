@@ -50,6 +50,15 @@ class WorkersControllerTest {
                         .content("{\"lastName\": \"TestLastName\"}"))
                 .andDo(print())
                 .andExpect(status().is(400));
+
+        // check 500 response
+        when(workersService.add(any())).thenReturn(false);
+
+        this.mockMvc.perform(post("/worker")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"lastName\": \"TestLastName\", \"name\": \"TestName\"}"))
+                .andDo(print())
+                .andExpect(status().is(500));
     }
 
     @Test
